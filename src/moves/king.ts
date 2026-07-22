@@ -2,7 +2,7 @@ import type { Board } from "../board";
 import { createMove } from "../move";
 import { NOT_PROMOTION, type Color, type Delta, type Move } from "../types";
 
-const kingDeltas: Delta[] = [
+export const kingDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
   { deltaRow: -1, deltaCol: 0 },
   { deltaRow: 0, deltaCol: 1 },

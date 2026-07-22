@@ -7,6 +7,10 @@
 // row=1 (rank 2):   8  9 10 11 12 13 14 15
 // row=0 (rank 1):   0  1  2  3  4  5  6  7
 //                  (a) (b) (c) (d) (e) (f) (g) (h)  <- file, col=0..7
+import type { SHA512_256 } from "bun";
+import { kingDeltas } from "./moves/king";
+import { knightDeltas } from "./moves/knight";
+import { bishopDeltas, rookDeltas } from "./moves/sliders";
 import { Color, PieceType, type Square } from "./types";
 
 export type Board = Square[];
@@ -101,4 +105,156 @@ export function parseNotation(square: string): number {
   const row = Number(digit);
 
   return (row - 1) * 8 + col;
+}
+
+export function isSquareAttacked(
+  position: Position,
+  square: number,
+  byColor: Color,
+): boolean {
+  const row = Math.floor(square / 8);
+  const col = square % 8;
+
+  // By Knight
+  for (const { deltaRow, deltaCol } of knightDeltas) {
+    let newRow = row + deltaRow;
+    let newCol = col + deltaCol;
+
+    if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
+      let newIndex = newRow * 8 + newCol;
+      if (position.board[newIndex] == null) {
+        continue;
+      } else if (
+        position.board[newIndex].pieceType === PieceType.Knight &&
+        position.board[newIndex].color === byColor
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // By King
+  for (const { deltaRow, deltaCol } of kingDeltas) {
+    let newRow = row + deltaRow;
+    let newCol = col + deltaCol;
+
+    if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
+      let newIndex = newRow * 8 + newCol;
+      if (position.board[newIndex] == null) {
+        continue;
+      } else if (
+        position.board[newIndex].pieceType === PieceType.King &&
+        position.board[newIndex].color === byColor
+      ) {
+        return true;
+      }
+    }
+  }
+
+  // By Rook or Queen
+  for (const { deltaRow, deltaCol } of rookDeltas) {
+    let step = 1;
+    while (true) {
+      let newRow = row + deltaRow * step;
+      let newCol = col + deltaCol * step;
+
+      if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
+        let newIndex = newRow * 8 + newCol;
+        if (position.board[newIndex] != null) {
+          if (
+            position.board[newIndex].color === byColor &&
+            (position.board[newIndex].pieceType === PieceType.Rook ||
+              position.board[newIndex].pieceType === PieceType.Queen)
+          ) {
+            return true;
+          }
+          break;
+        }
+      } else {
+        break;
+      }
+      step++;
+    }
+  }
+
+  // By Bishop or Queen
+  for (const { deltaRow, deltaCol } of bishopDeltas) {
+    let step = 1;
+    while (true) {
+      let newRow = row + deltaRow * step;
+      let newCol = col + deltaCol * step;
+
+      if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
+        let newIndex = newRow * 8 + newCol;
+        if (position.board[newIndex] != null) {
+          if (
+            position.board[newIndex].color === byColor &&
+            (position.board[newIndex].pieceType === PieceType.Bishop ||
+              position.board[newIndex].pieceType === PieceType.Queen)
+          ) {
+            return true;
+          }
+          break;
+        }
+      } else {
+        break;
+      }
+      step++;
+    }
+  }
+
+  // By Pawn
+  if (byColor === Color.White) {
+    let newRow = row - 1;
+    let leftCol = col - 1;
+    let leftIndex = newRow * 8 + leftCol;
+
+    if (
+      position.board[leftIndex] !== null &&
+      position.board[leftIndex]?.pieceType === PieceType.Pawn &&
+      position.board[leftIndex].color === byColor &&
+      leftCol >= 0
+    ) {
+      return true;
+    }
+
+    let rightCol = col + 1;
+    let rightIndex = newRow * 8 + rightCol;
+
+    if (
+      position.board[rightIndex] !== null &&
+      position.board[rightIndex]?.pieceType === PieceType.Pawn &&
+      position.board[rightIndex].color === byColor &&
+      rightCol <= 7
+    ) {
+      return true;
+    }
+  } else if (byColor === Color.Black) {
+    let newRow = row + 1;
+    let leftCol = col - 1;
+    let leftIndex = newRow * 8 + leftCol;
+
+    if (
+      position.board[leftIndex] !== null &&
+      position.board[leftIndex]?.pieceType === PieceType.Pawn &&
+      position.board[leftIndex].color === byColor &&
+      leftCol >= 0
+    ) {
+      return true;
+    }
+
+    let rightCol = col + 1;
+    let rightIndex = newRow * 8 + rightCol;
+
+    if (
+      position.board[rightIndex] !== null &&
+      position.board[rightIndex]?.pieceType === PieceType.Pawn &&
+      position.board[rightIndex].color === byColor &&
+      rightCol <= 7
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 }

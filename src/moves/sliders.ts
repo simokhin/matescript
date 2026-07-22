@@ -7,14 +7,14 @@ import {
   type Square,
 } from "../types";
 
-const rookDeltas: Delta[] = [
+export const rookDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
   { deltaRow: -1, deltaCol: 0 },
   { deltaRow: 0, deltaCol: 1 },
   { deltaRow: 0, deltaCol: -1 },
 ];
 
-const bishopDeltas: Delta[] = [
+export const bishopDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 1 },
   { deltaRow: 1, deltaCol: -1 },
   { deltaRow: -1, deltaCol: 1 },
