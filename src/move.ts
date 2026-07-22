@@ -1,4 +1,145 @@
-import type { PieceType, Move } from "./types";
+import type { Position } from "./board";
+import { type Move, NOT_PROMOTION, Color, PieceType } from "./types";
+
+export function makeMove(position: Position, move: Move): Position {
+  const newBoard = {
+    ...position,
+    board: [...position.board],
+    castleRights: { ...position.castleRights },
+  };
+
+  let from = getMoveFrom(move);
+  let to = getMoveTo(move);
+  let isCastle = getMoveIsCastle(move);
+  let isCapture = getMoveIsCapture(move);
+  let capturedPiece = getMoveCapturePiece(move);
+  let promotionPiece = getMovePromotionPiece(move);
+  let isEnPassant = getMoveIsEnPassant(move);
+
+  let movingPiece = newBoard.board[from];
+  if (!movingPiece) {
+    throw new Error("error in making move");
+  }
+
+  newBoard.board[from] = null;
+  newBoard.board[to] = movingPiece;
+
+  if (isCapture) {
+    newBoard.plyCount = 0;
+  }
+
+  if (promotionPiece !== NOT_PROMOTION) {
+    newBoard.board[to] = {
+      pieceType: promotionPiece,
+      color: position.sideToMove,
+    };
+  }
+
+  if (isEnPassant) {
+    let row = Math.floor(to / 8);
+    let col = to % 8;
+    if (position.sideToMove === Color.White) {
+      let newIndex = (row - 1) * 8 + col;
+      newBoard.board[newIndex] = null;
+    } else if (position.sideToMove === Color.Black) {
+      let newIndex = (row + 1) * 8 + col;
+      newBoard.board[newIndex] = null;
+    }
+  }
+
+  if (isCastle) {
+    switch (to) {
+      case 2:
+        newBoard.board[0] = null;
+        newBoard.board[3] = {
+          pieceType: PieceType.Rook,
+          color: Color.White,
+        };
+        break;
+      case 6:
+        newBoard.board[7] = null;
+        newBoard.board[5] = {
+          pieceType: PieceType.Rook,
+          color: Color.White,
+        };
+        break;
+      case 58:
+        newBoard.board[56] = null;
+        newBoard.board[59] = {
+          pieceType: PieceType.Rook,
+          color: Color.Black,
+        };
+        break;
+      case 62:
+        newBoard.board[63] = null;
+        newBoard.board[61] = {
+          pieceType: PieceType.Rook,
+          color: Color.Black,
+        };
+        break;
+    }
+  }
+
+  if (position.sideToMove === Color.White) {
+    newBoard.sideToMove = Color.Black;
+  } else if (position.sideToMove === Color.Black) {
+    newBoard.sideToMove = Color.White;
+  }
+
+  if (position.board[from]?.pieceType === PieceType.King) {
+    if (position.sideToMove === Color.White) {
+      newBoard.castleRights.whiteKingside = false;
+      newBoard.castleRights.whiteQueenside = false;
+    } else if (position.sideToMove === Color.Black) {
+      newBoard.castleRights.blackKingside = false;
+      newBoard.castleRights.blackQueenside = false;
+    }
+  } else if (position.board[from]?.pieceType === PieceType.Rook) {
+    if (position.sideToMove === Color.White && from === 0) {
+      newBoard.castleRights.whiteQueenside = false;
+    } else if (position.sideToMove === Color.White && from === 7) {
+      newBoard.castleRights.whiteKingside = false;
+    } else if (position.sideToMove === Color.Black && from === 56) {
+      newBoard.castleRights.blackQueenside = false;
+    } else if (position.sideToMove === Color.Black && from === 63) {
+      newBoard.castleRights.blackKingside = false;
+    }
+  }
+
+  if (isCapture && capturedPiece === PieceType.Rook && to === 0) {
+    newBoard.castleRights.whiteQueenside = false;
+  } else if (isCapture && capturedPiece === PieceType.Rook && to === 7) {
+    newBoard.castleRights.whiteKingside = false;
+  } else if (isCapture && capturedPiece === PieceType.Rook && to === 56) {
+    newBoard.castleRights.blackQueenside = false;
+  } else if (isCapture && capturedPiece === PieceType.Rook && to === 63) {
+    newBoard.castleRights.blackKingside = false;
+  }
+
+  if (movingPiece.pieceType === PieceType.Pawn) {
+    if (position.sideToMove === Color.White && to - from === 16) {
+      newBoard.enPassantSquare = to - 8;
+    } else if (position.sideToMove === Color.Black && from - to === 16) {
+      newBoard.enPassantSquare = to + 8;
+    } else {
+      newBoard.enPassantSquare = null;
+    }
+  } else {
+    newBoard.enPassantSquare = null;
+  }
+
+  if (isCapture || position.board[from]?.pieceType === PieceType.Pawn) {
+    newBoard.plyCount = 0;
+  } else {
+    newBoard.plyCount += 1;
+  }
+
+  if (position.sideToMove === Color.Black) {
+    newBoard.movesCount += 1;
+  }
+
+  return newBoard;
+}
 
 export function createMove(
   from: number,
@@ -41,7 +182,7 @@ export function createMove(
   return move as Move;
 }
 
-export function getIsCastle(move: Move): number {
+export function getMoveIsCastle(move: Move): number {
   return (move >> 20) & 1;
 }
 
