@@ -11,7 +11,7 @@
 
 import { Color, PieceType, type Square } from "./types"
 
-type Board = Square[]
+export type Board = Square[]
 
 export function createStartPosition(): Board {
   let board: Board = new Array(64)
