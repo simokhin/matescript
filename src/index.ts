@@ -1,4 +1,5 @@
 import { createStartPosition } from "./board";
+import { getKingMoves } from "./moves/kings";
 import { Color, PieceType} from "./types";
 
 const letters: Record<PieceType, string> = {
