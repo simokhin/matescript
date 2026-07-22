@@ -1,5 +1,5 @@
 import { createStartPosition } from "./board";
-import { Color, PieceType} from "./types";
+import { Color, PieceType } from "./types";
 
 const letters: Record<PieceType, string> = {
   [PieceType.Rook]: "r",
@@ -7,39 +7,39 @@ const letters: Record<PieceType, string> = {
   [PieceType.Bishop]: "b",
   [PieceType.Queen]: "q",
   [PieceType.King]: "k",
-  [PieceType.Pawn]: "p"
-}
+  [PieceType.Pawn]: "p",
+};
 
 function pieceNumberToLetter(pieceNumber: PieceType, color: Color): string {
-  let letter = ""
+  let letter = "";
 
   if (color === Color.White) {
-    return letter += letters[pieceNumber].toUpperCase()
-  } else  {
-    return letter += letters[pieceNumber]
+    return (letter += letters[pieceNumber].toUpperCase());
+  } else {
+    return (letter += letters[pieceNumber]);
   }
 }
 
-const board = createStartPosition()
+const pos = createStartPosition();
 
-let boardString = ""
+let boardString = "";
 
 for (let rank = 7; rank >= 0; rank--) {
   for (let file = 0; file <= 7; file++) {
-    let index = (rank * 8) + file
+    let index = rank * 8 + file;
 
     if (index % 8 === 0) {
-      console.log(boardString)
-      boardString = ""
+      console.log(boardString);
+      boardString = "";
     }
 
-    let piece = board[index]
+    let piece = pos.board[index];
 
     if (piece == null) {
-      boardString += "x "
+      boardString += "x ";
     } else {
-      boardString += pieceNumberToLetter(piece?.pieceType, piece?.color) + " "
+      boardString += pieceNumberToLetter(piece?.pieceType, piece?.color) + " ";
     }
   }
 }
-console.log(boardString)
+console.log(boardString);
