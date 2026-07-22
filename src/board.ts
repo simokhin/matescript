@@ -1,13 +1,3 @@
-// row=7 (rank 8):  56 57 58 59 60 61 62 63
-// row=6 (rank 7):  48 49 50 51 52 53 54 55
-// row=5 (rank 6):  40 41 42 43 44 45 46 47
-// row=4 (rank 5):  32 33 34 35 36 37 38 39
-// row=3 (rank 4):  24 25 26 27 28 29 30 31
-// row=2 (rank 3):  16 17 18 19 20 21 22 23
-// row=1 (rank 2):   8  9 10 11 12 13 14 15
-// row=0 (rank 1):   0  1  2  3  4  5  6  7
-//                  (a) (b) (c) (d) (e) (f) (g) (h)  <- file, col=0..7
-import type { SHA512_256 } from "bun";
 import { kingDeltas } from "./moves/king";
 import { knightDeltas } from "./moves/knight";
 import { bishopDeltas, rookDeltas } from "./moves/sliders";
@@ -27,6 +17,10 @@ export type Position = {
   enPassantSquare: number | null;
   plyCount: number;
   movesCount: number;
+  kingSquares: {
+    white: number;
+    black: number;
+  };
 };
 
 export function createStartPosition(): Position {
@@ -42,6 +36,10 @@ export function createStartPosition(): Position {
     enPassantSquare: null,
     plyCount: 0,
     movesCount: 1,
+    kingSquares: {
+      white: 4,
+      black: 60,
+    },
   };
 
   let board: Board = new Array(64);

@@ -6,6 +6,7 @@ export function makeMove(position: Position, move: Move): Position {
     ...position,
     board: [...position.board],
     castleRights: { ...position.castleRights },
+    kingSquares: { ...position.kingSquares },
   };
 
   let from = getMoveFrom(move);
@@ -88,9 +89,11 @@ export function makeMove(position: Position, move: Move): Position {
 
   if (position.board[from]?.pieceType === PieceType.King) {
     if (position.sideToMove === Color.White) {
+      newBoard.kingSquares.white = to;
       newBoard.castleRights.whiteKingside = false;
       newBoard.castleRights.whiteQueenside = false;
     } else if (position.sideToMove === Color.Black) {
+      newBoard.kingSquares.black = to;
       newBoard.castleRights.blackKingside = false;
       newBoard.castleRights.blackQueenside = false;
     }

@@ -15,6 +15,10 @@ export function ParseFEN(fen: string): Position {
     enPassantSquare: null,
     plyCount: 0,
     movesCount: 1,
+    kingSquares: {
+      white: 4,
+      black: 60,
+    },
   };
 
   pos.board.fill(null);
@@ -100,12 +104,14 @@ export function ParseFEN(fen: string): Position {
               pieceType: PieceType.King,
               color: Color.White,
             };
+            pos.kingSquares.white = squareIndex;
             break;
           case "k":
             pos.board[squareIndex] = {
               pieceType: PieceType.King,
               color: Color.Black,
             };
+            pos.kingSquares.black = squareIndex;
             break;
           case "P":
             pos.board[squareIndex] = {
