@@ -17,10 +17,7 @@ export type Position = {
   enPassantSquare: number | null;
   plyCount: number;
   movesCount: number;
-  kingSquares: {
-    white: number;
-    black: number;
-  };
+  kingSquares: Record<Color, number>;
 };
 
 export function createStartPosition(): Position {
@@ -37,8 +34,8 @@ export function createStartPosition(): Position {
     plyCount: 0,
     movesCount: 1,
     kingSquares: {
-      white: 4,
-      black: 60,
+      [Color.White]: 4,
+      [Color.Black]: 60,
     },
   };
 
@@ -255,4 +252,8 @@ export function isSquareAttacked(
   }
 
   return false;
+}
+
+export function oppositeColor(color: Color): Color {
+  return color === Color.White ? Color.Black : Color.White;
 }

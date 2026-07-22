@@ -2,7 +2,7 @@ import { letters } from ".";
 import { parseNotation, type Position } from "./board";
 import { Color, PieceType } from "./types";
 
-export function ParseFEN(fen: string): Position {
+export function parseFEN(fen: string): Position {
   let pos: Position = {
     board: new Array(64),
     sideToMove: Color.White,
@@ -16,8 +16,8 @@ export function ParseFEN(fen: string): Position {
     plyCount: 0,
     movesCount: 1,
     kingSquares: {
-      white: 4,
-      black: 60,
+      [Color.White]: 4,
+      [Color.Black]: 60,
     },
   };
 
@@ -104,14 +104,14 @@ export function ParseFEN(fen: string): Position {
               pieceType: PieceType.King,
               color: Color.White,
             };
-            pos.kingSquares.white = squareIndex;
+            pos.kingSquares[Color.White] = squareIndex;
             break;
           case "k":
             pos.board[squareIndex] = {
               pieceType: PieceType.King,
               color: Color.Black,
             };
-            pos.kingSquares.black = squareIndex;
+            pos.kingSquares[Color.Black] = squareIndex;
             break;
           case "P":
             pos.board[squareIndex] = {

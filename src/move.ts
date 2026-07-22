@@ -1,5 +1,14 @@
-import type { Position } from "./board";
+import { isSquareAttacked, oppositeColor, type Position } from "./board";
 import { type Move, NOT_PROMOTION, Color, PieceType } from "./types";
+
+export function makeLegalMove(position: Position, move: Move): Position | null {
+  const newPos = makeMove(position, move);
+  const opp = oppositeColor(position.sideToMove);
+  if (isSquareAttacked(newPos, newPos.kingSquares[position.sideToMove], opp)) {
+    return null;
+  }
+  return newPos;
+}
 
 export function makeMove(position: Position, move: Move): Position {
   const newBoard = {
@@ -89,11 +98,11 @@ export function makeMove(position: Position, move: Move): Position {
 
   if (position.board[from]?.pieceType === PieceType.King) {
     if (position.sideToMove === Color.White) {
-      newBoard.kingSquares.white = to;
+      newBoard.kingSquares[Color.White] = to;
       newBoard.castleRights.whiteKingside = false;
       newBoard.castleRights.whiteQueenside = false;
     } else if (position.sideToMove === Color.Black) {
-      newBoard.kingSquares.black = to;
+      newBoard.kingSquares[Color.Black] = to;
       newBoard.castleRights.blackKingside = false;
       newBoard.castleRights.blackQueenside = false;
     }

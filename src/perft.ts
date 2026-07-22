@@ -15,11 +15,15 @@ export function perft(position: Position, depth: number): number {
   moves.forEach((m) => {
     let newPos = makeMove(position, m);
     if (position.sideToMove === Color.White) {
-      if (!isSquareAttacked(newPos, newPos.kingSquares.white, Color.Black)) {
+      if (
+        !isSquareAttacked(newPos, newPos.kingSquares[Color.White], Color.Black)
+      ) {
         nodes += perft(newPos, depth - 1);
       }
     } else if (position.sideToMove === Color.Black) {
-      if (!isSquareAttacked(newPos, newPos.kingSquares.black, Color.White)) {
+      if (
+        !isSquareAttacked(newPos, newPos.kingSquares[Color.Black], Color.White)
+      ) {
         nodes += perft(newPos, depth - 1);
       }
     }

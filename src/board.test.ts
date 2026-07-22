@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { isSquareAttacked, parseNotation } from "./board";
-import { ParseFEN as parseFEN } from "./fen";
+import { parseFEN as parseFEN } from "./fen";
 import { Color } from "./types";
 
 test("parse algebraic notation string to square index", () => {

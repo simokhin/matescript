@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test";
-import { ParseFEN } from "./fen";
+import { parseFEN } from "./fen";
 import { START_FEN } from "./types";
 import { perft } from "./perft";
 
 test.skip("perft test", () => {
-  let pos = ParseFEN(START_FEN);
+  let pos = parseFEN(START_FEN);
 
   let nodes = perft(pos, 1);
   expect(nodes).toBe(20);
@@ -21,7 +21,7 @@ test.skip("perft test", () => {
   nodes = perft(pos, 5);
   expect(nodes).toBe(4_865_609);
 
-  pos = ParseFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
+  pos = parseFEN("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1");
 
   nodes = perft(pos, 1);
   expect(nodes).toBe(14);
