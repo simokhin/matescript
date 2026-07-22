@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { ParseFEN } from "../fen";
 import { Color, START_FEN, type Move } from "../types";
-import { getKingMoves } from "./king";
+import { getCastlingMove, getKingMoves } from "./king";
 
 test("generate king moves", () => {
   let pos = ParseFEN(START_FEN);
@@ -22,4 +22,35 @@ test("generate king moves", () => {
   pos = ParseFEN("k7/8/8/3N4/4K3/5B2/8/8 w - - 0 1");
   kingMoves = getKingMoves(28, pos.board, Color.White);
   expect(kingMoves.length).toBe(6);
+});
+
+test("generate castle move", () => {
+  let pos = ParseFEN(START_FEN);
+
+  let castleMoves = getCastlingMove(pos);
+  expect(castleMoves.length).toBe(0);
+
+  pos = ParseFEN(
+    "r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+  );
+  castleMoves = getCastlingMove(pos);
+  expect(castleMoves.length).toBe(1);
+
+  pos = ParseFEN(
+    "r3k2r/ppp1qppp/2np1n2/2b1p3/2B1P1P1/2NPBN2/PPP2PP1/R2QK2R b KQkq - 0 8",
+  );
+  castleMoves = getCastlingMove(pos);
+  expect(castleMoves.length).toBe(2);
+
+  pos = ParseFEN(
+    "r6r/pppkqppp/2np4/2b1p2n/2B1P1P1/2NPBN2/PPPK1PP1/R2Q3R w - - 3 10",
+  );
+  castleMoves = getCastlingMove(pos);
+  expect(castleMoves.length).toBe(0);
+
+  pos = ParseFEN(
+    "r2q1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2NPBbP1/PPPQ1P1P/R3K2R w KQ - 1 9",
+  );
+  castleMoves = getCastlingMove(pos);
+  expect(castleMoves.length).toBe(1);
 });
