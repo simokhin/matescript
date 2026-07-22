@@ -1,4 +1,4 @@
-import type { PieceType, Move, Color, Piece } from "./types";
+import type { PieceType, Move } from "./types";
 
 export function createMove(
   from: number,
@@ -8,7 +8,7 @@ export function createMove(
   promotion: PieceType,
   isEnPassant: boolean,
 ): Move {
-  let move: Move = 0;
+  let move: number = 0;
 
   move |= from; // Add "from" square to move
   move = (move << 6) | to; // Add "to" square to move
@@ -31,7 +31,7 @@ export function createMove(
     move = (move << 1) | 0;
   }
 
-  return move;
+  return move as Move;
 }
 
 export function getMoveFrom(move: Move): number {
