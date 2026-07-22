@@ -4,7 +4,7 @@ import { Color, PieceType } from "./types";
 
 export function ParseFEN(fen: string): Position {
   let pos: Position = {
-    board: [],
+    board: new Array(64),
     sideToMove: Color.White,
     castleRights: {
       whiteKingside: false,
@@ -17,10 +17,7 @@ export function ParseFEN(fen: string): Position {
     movesCount: 1,
   };
 
-  let board = new Array(64);
-  board.fill(null);
-
-  pos.board = board;
+  pos.board.fill(null);
 
   // Split FEN string
   const fenSplitted = fen.split(" ");
@@ -33,16 +30,22 @@ export function ParseFEN(fen: string): Position {
   for (let row = 0; row <= 7; row++) {
     let index = 7 - row;
 
-    for (let col = 0; col <= 7; col++) {
-      let char = fenPosition[index]?.charAt(col);
+    let col = 0;
+    let charIndex = 0;
+
+    while (col <= 7) {
+      let char = fenPosition[index]?.charAt(charIndex);
 
       let number = Number(char);
 
       let squareIndex = row * 8 + col;
 
       if (!isNaN(number)) {
-        col += number - 1;
+        col += number;
+        charIndex += 1;
       } else {
+        col += 1;
+        charIndex += 1;
         switch (char) {
           case "R":
             pos.board[squareIndex] = {

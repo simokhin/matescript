@@ -1,6 +1,6 @@
 import type { Board } from "../board";
 import { createMove } from "../move";
-import { Color, NO_PROMOTION, PieceType, type Move } from "../types";
+import { Color, NOT_PROMOTION, PieceType, type Move } from "../types";
 
 export function getPawnMoves(
   square: number,
@@ -41,7 +41,7 @@ export function getPawnMoves(
       oneStepIndex,
       false,
       0,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       false,
     );
     moves.push(newMove);
@@ -64,7 +64,7 @@ export function getPawnMoves(
       twoStepIndex,
       false,
       0,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       false,
     );
     moves.push(newMove);
@@ -87,7 +87,7 @@ export function getPawnMoves(
       leftCaptureSquare,
       true,
       capturePiece,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       false,
     );
     moves.push(newMove);
@@ -116,7 +116,7 @@ export function getPawnMoves(
       leftCaptureSquare,
       true,
       capturedPiece,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       true,
     );
     moves.push(newMove);
@@ -135,7 +135,7 @@ export function getPawnMoves(
       rightCaptureSquare,
       true,
       capturePiece,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       false,
     );
     moves.push(newMove);
@@ -164,7 +164,7 @@ export function getPawnMoves(
       rightCaptureSquare,
       true,
       capturedPiece,
-      NO_PROMOTION,
+      NOT_PROMOTION,
       true,
     );
     moves.push(newMove);
