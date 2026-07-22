@@ -1,7 +1,10 @@
 import { createStartPosition } from "./board";
-import { Color, PieceType } from "./types";
+import { ParseFEN } from "./fen";
+import { Color, PieceType, START_FEN } from "./types";
 
-const letters: Record<PieceType, string> = {
+ParseFEN(START_FEN);
+
+export const letters: Record<PieceType, string> = {
   [PieceType.Rook]: "r",
   [PieceType.Knight]: "n",
   [PieceType.Bishop]: "b",

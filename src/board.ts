@@ -92,3 +92,13 @@ export function createStartPosition(): Position {
 
   return pos;
 }
+
+export function parseNotation(square: string): number {
+  const letter = square.charAt(0);
+  const digit = square.charAt(1);
+
+  const col = letter.charCodeAt(0) - "a".charCodeAt(0);
+  const row = Number(digit);
+
+  return (row - 1) * 8 + col;
+}

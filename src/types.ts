@@ -30,3 +30,6 @@ type Brand<T, B> = T & { __brand: B };
 export type Move = Brand<number, "Move">;
 
 export const NO_PROMOTION: PieceType = PieceType.King;
+
+export const START_FEN =
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
