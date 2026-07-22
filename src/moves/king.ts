@@ -31,7 +31,15 @@ export function getKingMoves(
       let newIndex = newRow * 8 + newCol;
 
       if (board[newIndex] == null) {
-        let move = createMove(square, newIndex, false, 0, NOT_PROMOTION, false);
+        let move = createMove(
+          square,
+          newIndex,
+          false,
+          0,
+          NOT_PROMOTION,
+          false,
+          false,
+        );
         kingMoves.push(move);
       } else if (board[newIndex].color !== color) {
         let piece = board[newIndex].pieceType;
@@ -41,6 +49,7 @@ export function getKingMoves(
           true,
           piece,
           NOT_PROMOTION,
+          false,
           false,
         );
         kingMoves.push(move);

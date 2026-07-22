@@ -76,6 +76,7 @@ function getSliderMoves(
               piece,
               NOT_PROMOTION,
               false,
+              false,
             );
             moves.push(move);
             break;
@@ -87,6 +88,7 @@ function getSliderMoves(
             false,
             0,
             NOT_PROMOTION,
+            false,
             false,
           );
           moves.push(move);

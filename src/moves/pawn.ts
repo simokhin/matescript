@@ -43,11 +43,12 @@ export function getPawnMoves(
       0,
       NOT_PROMOTION,
       false,
+      false,
     );
     moves.push(newMove);
   } else if (board[oneStepIndex] === null && isLastRank) {
     for (let i = 0; i < 4; i++) {
-      let newMove = createMove(square, oneStepIndex, false, 0, i, false);
+      let newMove = createMove(square, oneStepIndex, false, 0, i, false, false);
       moves.push(newMove);
     }
   }
@@ -65,6 +66,7 @@ export function getPawnMoves(
       false,
       0,
       NOT_PROMOTION,
+      false,
       false,
     );
     moves.push(newMove);
@@ -89,6 +91,7 @@ export function getPawnMoves(
       capturePiece,
       NOT_PROMOTION,
       false,
+      false,
     );
     moves.push(newMove);
   } else if (
@@ -106,6 +109,7 @@ export function getPawnMoves(
         capturePiece,
         i,
         false,
+        false,
       );
       moves.push(newMove);
     }
@@ -118,6 +122,7 @@ export function getPawnMoves(
       capturedPiece,
       NOT_PROMOTION,
       true,
+      false,
     );
     moves.push(newMove);
   }
@@ -137,6 +142,7 @@ export function getPawnMoves(
       capturePiece,
       NOT_PROMOTION,
       false,
+      false,
     );
     moves.push(newMove);
   } else if (
@@ -154,6 +160,7 @@ export function getPawnMoves(
         capturePiece,
         i,
         false,
+        false,
       );
       moves.push(newMove);
     }
@@ -166,6 +173,7 @@ export function getPawnMoves(
       capturedPiece,
       NOT_PROMOTION,
       true,
+      false,
     );
     moves.push(newMove);
   }

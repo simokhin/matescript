@@ -7,10 +7,17 @@ export function createMove(
   capturedPiceType: PieceType,
   promotion: PieceType,
   isEnPassant: boolean,
+  isCastle: boolean,
 ): Move {
   let move: number = 0;
 
-  move |= from; // Add "from" square to move
+  if (isCastle) {
+    move |= 1;
+  } else {
+    move |= 0;
+  }
+
+  move = (move << 6) | from; // Add "from" square to move
   move = (move << 6) | to; // Add "to" square to move
 
   // Add a flag if move is a capture
@@ -32,6 +39,10 @@ export function createMove(
   }
 
   return move as Move;
+}
+
+export function getIsCastle(move: Move): number {
+  return (move >> 20) & 1;
 }
 
 export function getMoveFrom(move: Move): number {
