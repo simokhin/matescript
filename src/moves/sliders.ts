@@ -1,4 +1,11 @@
-import { Color, type Delta, type Square } from "../types";
+import { createMove } from "../move";
+import {
+  Color,
+  NOT_PROMOTION,
+  type Delta,
+  type Move,
+  type Square,
+} from "../types";
 
 const rookDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
@@ -18,7 +25,7 @@ export function getRookMoves(
   square: number,
   board: Square[],
   color: Color,
-): number[] {
+): Move[] {
   return getSliderMoves(square, board, color, rookDeltas);
 }
 
@@ -26,7 +33,7 @@ export function getBishopMoves(
   square: number,
   board: Square[],
   color: Color,
-): number[] {
+): Move[] {
   return getSliderMoves(square, board, color, bishopDeltas);
 }
 
@@ -34,7 +41,7 @@ export function getQueenMoves(
   square: number,
   board: Square[],
   color: Color,
-): number[] {
+): Move[] {
   return getSliderMoves(square, board, color, [...rookDeltas, ...bishopDeltas]);
 }
 
@@ -43,8 +50,8 @@ function getSliderMoves(
   board: Square[],
   color: Color,
   delta: Delta[],
-): number[] {
-  let moves: number[] = [];
+): Move[] {
+  let moves: Move[] = [];
 
   const row = Math.floor(square / 8);
   const col = square % 8;
@@ -61,11 +68,28 @@ function getSliderMoves(
           if (board[newIndex].color === color) {
             break;
           } else {
-            moves.push(newIndex);
+            let piece = board[newIndex].pieceType;
+            let move = createMove(
+              square,
+              newIndex,
+              true,
+              piece,
+              NOT_PROMOTION,
+              false,
+            );
+            moves.push(move);
             break;
           }
         } else {
-          moves.push(newIndex);
+          let move = createMove(
+            square,
+            newIndex,
+            false,
+            0,
+            NOT_PROMOTION,
+            false,
+          );
+          moves.push(move);
         }
       } else {
         break;
