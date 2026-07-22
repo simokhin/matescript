@@ -1,20 +1,38 @@
-import type { Board } from "../board"
-import { Color, PieceType, type Square } from "../types"
+import { Color, type Delta, type Square } from "../types"
 
-const rookDeltas = [
+const rookDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
   { deltaRow: -1, deltaCol: 0 },
   { deltaRow: 0, deltaCol: 1 },
   { deltaRow: 0, deltaCol: -1 },
 ]
 
+const bishopDeltas: Delta[] = [
+  { deltaRow: 1, deltaCol: 1 },
+  { deltaRow: 1, deltaCol: -1 },
+  { deltaRow: -1, deltaCol: 1 },
+  { deltaRow: -1, deltaCol: -1 },
+]
+
 export function getRookMoves(square: number, board: Square[], color: Color): number[] {
-  let rookMoves: number[] = []
+  return getSliderMoves(square, board, color, rookDeltas)
+}
+
+export function getBishopMoves(square: number, board: Square[], color: Color): number[] {
+  return getSliderMoves(square, board, color, bishopDeltas)
+}
+
+export function getQueenMoves(square: number, board: Square[], color: Color): number[] {
+  return getSliderMoves(square, board, color, [...rookDeltas, ...bishopDeltas])
+}
+
+function getSliderMoves(square: number, board: Square[], color: Color, delta: Delta[]): number[] {
+  let moves: number[] = []
 
   const row = Math.floor(square/8)
   const col = square % 8
 
-  for (const { deltaRow, deltaCol } of rookDeltas) {
+  for (const { deltaRow, deltaCol } of delta) {
     let step = 1
     while (true) {
       let newRow = row + (deltaRow * step)
@@ -26,11 +44,11 @@ export function getRookMoves(square: number, board: Square[], color: Color): num
           if (board[newIndex].color === color) {
             break
           } else {
-            rookMoves.push(newIndex)
+            moves.push(newIndex)
             break
           }
         } else {
-          rookMoves.push(newIndex)
+          moves.push(newIndex)
         }
       } else {
         break
@@ -40,5 +58,5 @@ export function getRookMoves(square: number, board: Square[], color: Color): num
     }
   }
 
-  return rookMoves
+  return moves
 }

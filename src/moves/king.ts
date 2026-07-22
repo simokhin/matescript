@@ -1,4 +1,6 @@
-const kingDeltas = [
+import type { Delta } from "../types";
+
+const kingDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
   { deltaRow: -1, deltaCol: 0 },
   { deltaRow: 0, deltaCol: 1 },

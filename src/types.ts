@@ -18,3 +18,8 @@ export type Piece = {
 }
 
 export type Square = Piece | null
+
+export type Delta = {
+  deltaRow: number,
+  deltaCol: number
+}

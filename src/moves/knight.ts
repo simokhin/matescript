@@ -1,4 +1,6 @@
-const knightDeltas = [
+import type { Delta } from "../types";
+
+const knightDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 2 },
   { deltaRow: 1, deltaCol: -2 },
   { deltaRow: -1, deltaCol: 2 },

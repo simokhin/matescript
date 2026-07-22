@@ -1,5 +1,4 @@
 import { createStartPosition } from "./board";
-import { getRookMoves } from "./moves/sliders";
 import { Color, PieceType} from "./types";
 
 const letters: Record<PieceType, string> = {
