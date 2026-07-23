@@ -5,10 +5,11 @@ import type { Move, Position } from "../types";
 import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
 import type { SearchParameters, SearchResult, SearchState } from "./types";
 import { makeLegalMove } from "../moves/makeMove";
+import { quiescence } from "./quiescence";
 
-const MATE_SCORE = 1_000_000;
+export const MATE_SCORE = 1_000_000;
 
-let searchState: SearchState = {
+export let searchState: SearchState = {
   deadline: 0,
   nodes: 0,
 };
@@ -92,6 +93,7 @@ export function search(
 ) {
   searchState.nodes += 1;
 
+  // Need to stop a search when time is gone
   if (searchState.nodes % 2048 === 0) {
     if (Date.now() > searchState.deadline) {
       throw new SearchTimeoutError();
@@ -99,7 +101,7 @@ export function search(
   }
 
   if (depth === 0) {
-    return evaluate(position);
+    return quiescence(position, alpha, beta);
   }
 
   let bestValue = -Infinity;
@@ -126,6 +128,7 @@ export function search(
     }
   }
 
+  // Check for a mate/stalemate
   if (legalMoves.length === 0) {
     if (
       isSquareAttacked(
