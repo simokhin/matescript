@@ -2,6 +2,7 @@ import { kingDeltas } from "../moves/king";
 import { knightDeltas } from "../moves/knight";
 import { bishopDeltas, rookDeltas } from "../moves/sliders";
 import { Color, PieceType, type Board, type Position } from "../types";
+import { computeHash } from "../zobrist";
 
 export function createStartPosition(): Position {
   const pos: Position = {
@@ -20,6 +21,7 @@ export function createStartPosition(): Position {
       [Color.White]: 4,
       [Color.Black]: 60,
     },
+    hash: 0,
   };
 
   const board: Board = new Array(64);
@@ -71,6 +73,7 @@ export function createStartPosition(): Position {
   }
 
   pos.board = board;
+  pos.hash = computeHash(pos);
 
   return pos;
 }

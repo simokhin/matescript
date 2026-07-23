@@ -1,5 +1,6 @@
 import { parseNotation } from "./board";
 import { Color, PieceType, type Position } from "../types";
+import { computeHash } from "../zobrist";
 
 export function parseFEN(fen: string): Position {
   const pos: Position = {
@@ -18,6 +19,7 @@ export function parseFEN(fen: string): Position {
       [Color.White]: 4,
       [Color.Black]: 60,
     },
+    hash: 0,
   };
 
   pos.board.fill(null);
@@ -184,6 +186,8 @@ export function parseFEN(fen: string): Position {
     const fullMovesCount = Number(fenSplitted[5]);
     pos.movesCount = fullMovesCount;
   }
+
+  pos.hash = computeHash(pos);
 
   return pos;
 }

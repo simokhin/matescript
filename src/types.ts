@@ -43,4 +43,5 @@ export type Position = {
   plyCount: number;
   movesCount: number;
   kingSquares: Record<Color, number>;
+  hash: number;
 };

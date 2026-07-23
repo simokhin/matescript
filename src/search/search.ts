@@ -5,6 +5,7 @@ import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
 import type { SearchParameters, SearchResult, SearchState } from "./types";
 import { makeLegalMove } from "../moves/makeMove";
 import { quiescence } from "./quiescence";
+import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
 
 export const MATE_SCORE = 1_000_000;
 
@@ -103,7 +104,15 @@ export function search(
     return quiescence(position, alpha, beta);
   }
 
+  const originalAlpha = alpha;
+
+  const probeResult = probeTT(position.hash, depth, alpha, beta);
+  if (probeResult != null) {
+    return probeResult;
+  }
+
   let bestValue = -Infinity;
+  let bestMove: Move | undefined = undefined;
 
   const moves = generateAllMoves(position);
   moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
@@ -120,6 +129,7 @@ export function search(
       if (evaluation > bestValue) {
         bestValue = evaluation;
         alpha = Math.max(bestValue, alpha);
+        bestMove = move;
       }
       if (alpha >= beta) {
         break;
@@ -140,6 +150,19 @@ export function search(
     } else {
       return 0;
     }
+  }
+
+  let ttFlag;
+  if (bestValue <= originalAlpha) {
+    ttFlag = UPPERBOUND;
+  } else if (bestValue >= beta) {
+    ttFlag = LOWERBOUND;
+  } else {
+    ttFlag = EXACT;
+  }
+
+  if (bestMove !== undefined) {
+    storeTT(position.hash, depth, bestValue, ttFlag, bestMove);
   }
 
   return bestValue;

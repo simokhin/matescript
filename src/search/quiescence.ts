@@ -1,10 +1,11 @@
 import { makeLegalMove } from "../moves/makeMove";
 import { getMoveIsCapture } from "../moves/move";
 import { generateAllMoves } from "../moves/movegen";
-import type { Position } from "../types";
+import type { Move, Position } from "../types";
 import { evaluate } from "./evaluation";
 import { searchState } from "./search";
 import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
+import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
 
 export function quiescence(
   position: Position,
@@ -25,8 +26,16 @@ export function quiescence(
     return standPat;
   }
 
+  const originalAlpha = alpha;
+
+  const probeResult = probeTT(position.hash, 0, alpha, beta);
+  if (probeResult != null) {
+    return probeResult;
+  }
+
   let bestValue = standPat;
   alpha = Math.max(alpha, standPat);
+  let bestMove: Move | undefined = undefined;
 
   const moves = generateAllMoves(position);
   const captureMoves = moves.filter((move) => getMoveIsCapture(move));
@@ -43,11 +52,25 @@ export function quiescence(
       if (evaluation > bestValue) {
         bestValue = evaluation;
         alpha = Math.max(bestValue, alpha);
+        bestMove = move;
       }
       if (alpha >= beta) {
         break;
       }
     }
+  }
+
+  let ttFlag;
+  if (bestValue <= originalAlpha) {
+    ttFlag = UPPERBOUND;
+  } else if (bestValue >= beta) {
+    ttFlag = LOWERBOUND;
+  } else {
+    ttFlag = EXACT;
+  }
+
+  if (bestMove !== undefined) {
+    storeTT(position.hash, 0, bestValue, ttFlag, bestMove);
   }
 
   return bestValue;

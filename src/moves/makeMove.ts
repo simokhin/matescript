@@ -1,6 +1,7 @@
 import { NOT_PROMOTION } from "../constants";
 import { isSquareAttacked, oppositeColor } from "../position/board";
 import { Color, PieceType, type Move, type Position } from "../types";
+import { computeHash } from "../zobrist";
 import {
   getMoveCapturePiece,
   getMoveFrom,
@@ -159,6 +160,9 @@ export function makeMove(position: Position, move: Move): Position {
   if (position.sideToMove === Color.Black) {
     newBoard.movesCount += 1;
   }
+
+  // TODO: replace with incremental XOR updates (only squares that changed), instead of recomputing the hash over the whole board — makeMove is a hot path
+  newBoard.hash = computeHash(newBoard);
 
   return newBoard;
 }
