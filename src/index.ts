@@ -10,12 +10,18 @@ import { generateAllMoves } from "./movegen";
 import { findBestMove, type SearchParameters } from "./search";
 import {
   AUTHOR_NAME,
+  Color,
   ENGINE_NAME,
   NOT_PROMOTION,
   PieceType,
   START_FEN,
   type Move,
 } from "./types";
+
+let timeKeys: Record<Color, { time: string; inc: string }> = {
+  [Color.White]: { time: "wtime", inc: "winc" },
+  [Color.Black]: { time: "btime", inc: "binc" },
+};
 
 let position = parseFEN(START_FEN);
 
@@ -69,25 +75,54 @@ for await (const line of console) {
       }
       break;
     case "go":
-      if (parts[1] === "depth") {
+      let goParts = parts.slice(1);
+      let parsedGoParts: Record<string, string> = {};
+
+      for (let i = 0; i < goParts.length; i += 2) {
+        let key = goParts[i];
+        let value = goParts[i + 1];
+
+        if (key !== undefined && value !== undefined) {
+          parsedGoParts[key] = value;
+        }
+      }
+
+      if ("depth" in parsedGoParts) {
         let depth: SearchParameters = {
           name: "maxDepth",
-          depth: Number(parts[2]),
+          depth: Number(parsedGoParts.depth),
         };
 
-        let move = findBestMove(position, depth);
-        if (move !== undefined) {
-          console.log(`bestmove ${moveToNotation(move)}`);
+        let result = findBestMove(position, depth);
+        if (result.bestMove !== undefined) {
+          console.log(`info nodes ${result.nodes}`);
+          console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
-      } else if (parts[1] === "movetime") {
+      } else if ("movetime" in parsedGoParts) {
         let moveTime: SearchParameters = {
           name: "timeLimit",
-          limit: Number(parts[2]),
+          limit: Number(parsedGoParts.movetime),
         };
 
-        let move = findBestMove(position, moveTime);
-        if (move !== undefined) {
-          console.log(`bestmove ${moveToNotation(move)}`);
+        let result = findBestMove(position, moveTime);
+        if (result.bestMove !== undefined) {
+          console.log(`info nodes ${result.nodes}`);
+          console.log(`bestmove ${moveToNotation(result.bestMove)}`);
+        }
+      } else if ("wtime" in parsedGoParts) {
+        let timeFotMove =
+          Number(parsedGoParts[timeKeys[position.sideToMove].time]) / 30 +
+          Number(parsedGoParts[timeKeys[position.sideToMove].inc]) * 0.8;
+
+        let moveTime: SearchParameters = {
+          name: "timeLimit",
+          limit: timeFotMove,
+        };
+
+        let result = findBestMove(position, moveTime);
+        if (result.bestMove !== undefined) {
+          console.log(`info nodes ${result.nodes}`);
+          console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       }
       break;

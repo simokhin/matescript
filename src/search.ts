@@ -13,6 +13,11 @@ type MaxDepth = { name: "maxDepth"; depth: number };
 type TimeLimitMs = { name: "timeLimit"; limit: number };
 export type SearchParameters = MaxDepth | TimeLimitMs;
 
+type SearchResult = {
+  bestMove: Move | undefined;
+  nodes: number;
+};
+
 let searchState: SearchState = {
   deadline: 0,
   nodes: 0,
@@ -21,7 +26,7 @@ let searchState: SearchState = {
 export function findBestMove(
   position: Position,
   params: SearchParameters,
-): Move | undefined {
+): SearchResult {
   let bestMove: Move | undefined = undefined;
 
   searchState.deadline = 0;
@@ -65,7 +70,10 @@ export function findBestMove(
       }
     } catch (e) {
       if (e instanceof SearchTimeoutError) {
-        return bestMove;
+        return {
+          bestMove: bestMove,
+          nodes: searchState.nodes,
+        };
       } else {
         throw e;
       }
@@ -76,7 +84,10 @@ export function findBestMove(
     depth += 1;
   }
 
-  return bestMove;
+  return {
+    bestMove: bestMove,
+    nodes: searchState.nodes,
+  };
 }
 
 export function search(position: Position, depth: number) {
