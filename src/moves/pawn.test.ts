@@ -4,9 +4,9 @@ import { getPawnMoves } from "./pawn";
 import { Color } from "../types";
 
 test("get pawn moves", () => {
-  let pos = createStartPosition();
+  const pos = createStartPosition();
 
-  let moves = getPawnMoves(12, pos.board, Color.White, pos.enPassantSquare);
+  const moves = getPawnMoves(12, pos.board, Color.White, pos.enPassantSquare);
 
   expect(moves.length).toBe(2);
 });

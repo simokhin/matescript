@@ -7,27 +7,27 @@ import { PieceType, type Move, type Position } from "./types";
 export function moveToNotation(move: Move): string {
   let notation = "";
 
-  let from = getMoveFrom(move);
+  const from = getMoveFrom(move);
 
-  let fromCol = from % 8;
-  let fromFile = String.fromCharCode("a".charCodeAt(0) + fromCol);
+  const fromCol = from % 8;
+  const fromFile = String.fromCharCode("a".charCodeAt(0) + fromCol);
   notation += fromFile;
 
-  let fromRow = Math.floor(from / 8);
-  let fromRank = (fromRow + 1).toString();
+  const fromRow = Math.floor(from / 8);
+  const fromRank = (fromRow + 1).toString();
   notation += fromRank;
 
-  let to = getMoveTo(move);
+  const to = getMoveTo(move);
 
-  let toCol = to % 8;
-  let toFile = String.fromCharCode("a".charCodeAt(0) + toCol);
+  const toCol = to % 8;
+  const toFile = String.fromCharCode("a".charCodeAt(0) + toCol);
   notation += toFile;
 
-  let toRow = Math.floor(to / 8);
-  let toRank = (toRow + 1).toString();
+  const toRow = Math.floor(to / 8);
+  const toRank = (toRow + 1).toString();
   notation += toRank;
 
-  let promotionPiece = getMovePromotionPiece(move);
+  const promotionPiece = getMovePromotionPiece(move);
   if (promotionPiece !== NOT_PROMOTION) {
     switch (promotionPiece) {
       case PieceType.Bishop:
@@ -49,13 +49,11 @@ export function moveToNotation(move: Move): string {
 }
 
 export function notationToMove(notation: string, position: Position): Move {
-  let move: Move;
-
-  let from = parseNotation(notation.slice(0, 2));
-  let to = parseNotation(notation.slice(2, 4));
+  const from = parseNotation(notation.slice(0, 2));
+  const to = parseNotation(notation.slice(2, 4));
   let promotionPiece: PieceType = NOT_PROMOTION;
 
-  let promotionChar = notation.length > 4 ? notation.charAt(4) : undefined;
+  const promotionChar = notation.length > 4 ? notation.charAt(4) : undefined;
 
   if (promotionChar !== undefined) {
     switch (promotionChar) {
@@ -73,9 +71,9 @@ export function notationToMove(notation: string, position: Position): Move {
     }
   }
 
-  let moves = generateAllMoves(position);
+  const moves = generateAllMoves(position);
 
-  let m = moves.find(
+  const m = moves.find(
     (m) =>
       getMoveFrom(m) === from &&
       getMoveTo(m) === to &&

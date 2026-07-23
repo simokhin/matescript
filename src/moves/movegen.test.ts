@@ -4,9 +4,9 @@ import { START_FEN } from "../constants";
 import { generateAllMoves } from "./movegen";
 
 test("generate all moves on start position", () => {
-  let pos = parseFEN(START_FEN);
+  const pos = parseFEN(START_FEN);
 
-  let moves = generateAllMoves(pos);
+  const moves = generateAllMoves(pos);
 
   expect(moves.length).toBe(20);
 });

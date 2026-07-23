@@ -4,7 +4,7 @@ import { bishopDeltas, rookDeltas } from "../moves/sliders";
 import { Color, PieceType, type Board, type Position } from "../types";
 
 export function createStartPosition(): Position {
-  let pos: Position = {
+  const pos: Position = {
     board: [],
     sideToMove: Color.White,
     castleRights: {
@@ -22,7 +22,7 @@ export function createStartPosition(): Position {
     },
   };
 
-  let board: Board = new Array(64);
+  const board: Board = new Array(64);
   board.fill(null);
 
   // Rooks
@@ -95,13 +95,12 @@ export function isSquareAttacked(
 
   // By Knight
   for (const { deltaRow, deltaCol } of knightDeltas) {
-    let newRow = row + deltaRow;
-    let newCol = col + deltaCol;
+    const newRow = row + deltaRow;
+    const newCol = col + deltaCol;
 
     if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-      let newIndex = newRow * 8 + newCol;
+      const newIndex = newRow * 8 + newCol;
       if (position.board[newIndex] == null) {
-        continue;
       } else if (
         position.board[newIndex].pieceType === PieceType.Knight &&
         position.board[newIndex].color === byColor
@@ -113,13 +112,12 @@ export function isSquareAttacked(
 
   // By King
   for (const { deltaRow, deltaCol } of kingDeltas) {
-    let newRow = row + deltaRow;
-    let newCol = col + deltaCol;
+    const newRow = row + deltaRow;
+    const newCol = col + deltaCol;
 
     if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-      let newIndex = newRow * 8 + newCol;
+      const newIndex = newRow * 8 + newCol;
       if (position.board[newIndex] == null) {
-        continue;
       } else if (
         position.board[newIndex].pieceType === PieceType.King &&
         position.board[newIndex].color === byColor
@@ -133,11 +131,11 @@ export function isSquareAttacked(
   for (const { deltaRow, deltaCol } of rookDeltas) {
     let step = 1;
     while (true) {
-      let newRow = row + deltaRow * step;
-      let newCol = col + deltaCol * step;
+      const newRow = row + deltaRow * step;
+      const newCol = col + deltaCol * step;
 
       if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-        let newIndex = newRow * 8 + newCol;
+        const newIndex = newRow * 8 + newCol;
         if (position.board[newIndex] != null) {
           if (
             position.board[newIndex].color === byColor &&
@@ -159,11 +157,11 @@ export function isSquareAttacked(
   for (const { deltaRow, deltaCol } of bishopDeltas) {
     let step = 1;
     while (true) {
-      let newRow = row + deltaRow * step;
-      let newCol = col + deltaCol * step;
+      const newRow = row + deltaRow * step;
+      const newCol = col + deltaCol * step;
 
       if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-        let newIndex = newRow * 8 + newCol;
+        const newIndex = newRow * 8 + newCol;
         if (position.board[newIndex] != null) {
           if (
             position.board[newIndex].color === byColor &&
@@ -183,9 +181,9 @@ export function isSquareAttacked(
 
   // By Pawn
   if (byColor === Color.White) {
-    let newRow = row - 1;
-    let leftCol = col - 1;
-    let leftIndex = newRow * 8 + leftCol;
+    const newRow = row - 1;
+    const leftCol = col - 1;
+    const leftIndex = newRow * 8 + leftCol;
 
     if (
       position.board[leftIndex] !== null &&
@@ -196,8 +194,8 @@ export function isSquareAttacked(
       return true;
     }
 
-    let rightCol = col + 1;
-    let rightIndex = newRow * 8 + rightCol;
+    const rightCol = col + 1;
+    const rightIndex = newRow * 8 + rightCol;
 
     if (
       position.board[rightIndex] !== null &&
@@ -208,9 +206,9 @@ export function isSquareAttacked(
       return true;
     }
   } else if (byColor === Color.Black) {
-    let newRow = row + 1;
-    let leftCol = col - 1;
-    let leftIndex = newRow * 8 + leftCol;
+    const newRow = row + 1;
+    const leftCol = col - 1;
+    const leftIndex = newRow * 8 + leftCol;
 
     if (
       position.board[leftIndex] !== null &&
@@ -221,8 +219,8 @@ export function isSquareAttacked(
       return true;
     }
 
-    let rightCol = col + 1;
-    let rightIndex = newRow * 8 + rightCol;
+    const rightCol = col + 1;
+    const rightIndex = newRow * 8 + rightCol;
 
     if (
       position.board[rightIndex] !== null &&

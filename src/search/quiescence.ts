@@ -1,9 +1,9 @@
 import { makeLegalMove } from "../moves/makeMove";
 import { getMoveIsCapture } from "../moves/move";
 import { generateAllMoves } from "../moves/movegen";
-import type { Move, Position } from "../types";
+import type { Position } from "../types";
 import { evaluate } from "./evaluation";
-import { MATE_SCORE, searchState } from "./search";
+import { searchState } from "./search";
 import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
 
 export function quiescence(
@@ -20,7 +20,7 @@ export function quiescence(
     }
   }
 
-  let standPat = evaluate(position);
+  const standPat = evaluate(position);
   if (standPat >= beta) {
     return standPat;
   }
@@ -28,17 +28,17 @@ export function quiescence(
   let bestValue = standPat;
   alpha = Math.max(alpha, standPat);
 
-  let moves = generateAllMoves(position);
-  let captureMoves = moves.filter((move) => getMoveIsCapture(move));
+  const moves = generateAllMoves(position);
+  const captureMoves = moves.filter((move) => getMoveIsCapture(move));
   captureMoves.sort(
     (a, b) => getMoveScore(b, position) - getMoveScore(a, position),
   );
 
-  for (let move of captureMoves) {
-    let newPos = makeLegalMove(position, move);
+  for (const move of captureMoves) {
+    const newPos = makeLegalMove(position, move);
 
     if (newPos != null) {
-      let evaluation = -quiescence(newPos, -beta, -alpha);
+      const evaluation = -quiescence(newPos, -beta, -alpha);
 
       if (evaluation > bestValue) {
         bestValue = evaluation;

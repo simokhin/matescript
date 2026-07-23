@@ -1,5 +1,4 @@
 import { isSquareAttacked, oppositeColor } from "../position/board";
-import { evaluate } from "./evaluation";
 import { generateAllMoves } from "../moves/movegen";
 import type { Move, Position } from "../types";
 import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
@@ -9,7 +8,7 @@ import { quiescence } from "./quiescence";
 
 export const MATE_SCORE = 1_000_000;
 
-export let searchState: SearchState = {
+export const searchState: SearchState = {
   deadline: 0,
   nodes: 0,
 };
@@ -18,7 +17,7 @@ export function findBestMove(
   position: Position,
   params: SearchParameters,
 ): SearchResult {
-  let bestMove: Move | undefined = undefined;
+  let bestMove: Move | undefined;
 
   searchState.deadline = 0;
   searchState.nodes = 0;
@@ -40,21 +39,21 @@ export function findBestMove(
   // Iterative Deepening
   let depth = 1;
   while (depth <= maxDepth && Date.now() <= searchState.deadline) {
-    let moves = generateAllMoves(position);
+    const moves = generateAllMoves(position);
     moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
     let currentBestMove: Move | undefined = bestMove;
     let alpha = -Infinity;
-    let beta = Infinity;
+    const beta = Infinity;
 
     try {
-      for (let move of moves) {
-        let newPos = makeLegalMove(position, move);
+      for (const move of moves) {
+        const newPos = makeLegalMove(position, move);
         if (newPos == null) {
           continue;
         }
 
-        let evaluation = -search(newPos, depth - 1, -beta, -alpha);
+        const evaluation = -search(newPos, depth - 1, -beta, -alpha);
 
         if (evaluation > alpha) {
           alpha = evaluation;
@@ -106,17 +105,17 @@ export function search(
 
   let bestValue = -Infinity;
 
-  let moves = generateAllMoves(position);
+  const moves = generateAllMoves(position);
   moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
-  let legalMoves: Move[] = [];
+  const legalMoves: Move[] = [];
 
-  for (let move of moves) {
-    let newPos = makeLegalMove(position, move);
+  for (const move of moves) {
+    const newPos = makeLegalMove(position, move);
 
     if (newPos != null) {
       legalMoves.push(move);
-      let evaluation = -search(newPos, depth - 1, -beta, -alpha);
+      const evaluation = -search(newPos, depth - 1, -beta, -alpha);
 
       if (evaluation > bestValue) {
         bestValue = evaluation;

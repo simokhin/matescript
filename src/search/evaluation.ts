@@ -28,22 +28,26 @@ export const pieceSquareTables: Record<PieceType, number[]> = {
 
 export function evaluate(position: Position): number {
   let evaluation = 0;
-  let color = position.sideToMove;
+  const color = position.sideToMove;
 
   position.board.forEach((p, i) => {
     if (p != null) {
       if (p?.color === color) {
         evaluation += pieceWeights[p.pieceType];
         if (p.color === Color.White) {
+          // biome-ignore lint/style/noNonNullAssertion: i comes from forEach over a 64-square board, always 0-63, and PST arrays always have 64 elements
           evaluation += pieceSquareTables[p.pieceType][i]!;
         } else {
+          // biome-ignore lint/style/noNonNullAssertion: i ^ 56 stays within 0-63 (mirrors rank, keeps file), and PST arrays always have 64 elements
           evaluation += pieceSquareTables[p.pieceType][i ^ 56]!;
         }
       } else {
         evaluation -= pieceWeights[p.pieceType];
         if (p.color === Color.White) {
+          // biome-ignore lint/style/noNonNullAssertion: i comes from forEach over a 64-square board, always 0-63, and PST arrays always have 64 elements
           evaluation -= pieceSquareTables[p.pieceType][i]!;
         } else {
+          // biome-ignore lint/style/noNonNullAssertion: i ^ 56 stays within 0-63 (mirrors rank, keeps file), and PST arrays always have 64 elements
           evaluation -= pieceSquareTables[p.pieceType][i ^ 56]!;
         }
       }

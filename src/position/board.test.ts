@@ -10,7 +10,7 @@ test("parse algebraic notation string to square index", () => {
 });
 
 test("is square attacked", () => {
-  let pos = parseFEN(
+  const pos = parseFEN(
     "rn2k2r/5ppp/p1p5/4pb2/P2q4/2P3B1/5PPP/R1K2B1R b kq - 0 16",
   );
 

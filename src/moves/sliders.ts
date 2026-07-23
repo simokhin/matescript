@@ -1,6 +1,6 @@
 import { NOT_PROMOTION } from "../constants";
 import { createMove } from "./move";
-import { Color, type Delta, type Move, type Square } from "../types";
+import type { Color, Delta, Move, Square } from "../types";
 
 export const rookDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },
@@ -46,7 +46,7 @@ function getSliderMoves(
   color: Color,
   delta: Delta[],
 ): Move[] {
-  let moves: Move[] = [];
+  const moves: Move[] = [];
 
   const row = Math.floor(square / 8);
   const col = square % 8;
@@ -54,17 +54,17 @@ function getSliderMoves(
   for (const { deltaRow, deltaCol } of delta) {
     let step = 1;
     while (true) {
-      let newRow = row + deltaRow * step;
-      let newCol = col + deltaCol * step;
+      const newRow = row + deltaRow * step;
+      const newCol = col + deltaCol * step;
 
       if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-        let newIndex = newRow * 8 + newCol;
+        const newIndex = newRow * 8 + newCol;
         if (board[newIndex] != null) {
           if (board[newIndex].color === color) {
             break;
           } else {
-            let piece = board[newIndex].pieceType;
-            let move = createMove(
+            const piece = board[newIndex].pieceType;
+            const move = createMove(
               square,
               newIndex,
               true,
@@ -77,7 +77,7 @@ function getSliderMoves(
             break;
           }
         } else {
-          let move = createMove(
+          const move = createMove(
             square,
             newIndex,
             false,

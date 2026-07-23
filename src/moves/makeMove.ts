@@ -28,15 +28,15 @@ export function makeMove(position: Position, move: Move): Position {
     kingSquares: { ...position.kingSquares },
   };
 
-  let from = getMoveFrom(move);
-  let to = getMoveTo(move);
-  let isCastle = getMoveIsCastle(move);
-  let isCapture = getMoveIsCapture(move);
-  let capturedPiece = getMoveCapturePiece(move);
-  let promotionPiece = getMovePromotionPiece(move);
-  let isEnPassant = getMoveIsEnPassant(move);
+  const from = getMoveFrom(move);
+  const to = getMoveTo(move);
+  const isCastle = getMoveIsCastle(move);
+  const isCapture = getMoveIsCapture(move);
+  const capturedPiece = getMoveCapturePiece(move);
+  const promotionPiece = getMovePromotionPiece(move);
+  const isEnPassant = getMoveIsEnPassant(move);
 
-  let movingPiece = newBoard.board[from];
+  const movingPiece = newBoard.board[from];
   if (!movingPiece) {
     throw new Error("error in making move");
   }
@@ -56,13 +56,13 @@ export function makeMove(position: Position, move: Move): Position {
   }
 
   if (isEnPassant) {
-    let row = Math.floor(to / 8);
-    let col = to % 8;
+    const row = Math.floor(to / 8);
+    const col = to % 8;
     if (position.sideToMove === Color.White) {
-      let newIndex = (row - 1) * 8 + col;
+      const newIndex = (row - 1) * 8 + col;
       newBoard.board[newIndex] = null;
     } else if (position.sideToMove === Color.Black) {
-      let newIndex = (row + 1) * 8 + col;
+      const newIndex = (row + 1) * 8 + col;
       newBoard.board[newIndex] = null;
     }
   }

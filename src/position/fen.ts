@@ -2,7 +2,7 @@ import { parseNotation } from "./board";
 import { Color, PieceType, type Position } from "../types";
 
 export function parseFEN(fen: string): Position {
-  let pos: Position = {
+  const pos: Position = {
     board: new Array(64),
     sideToMove: Color.White,
     castleRights: {
@@ -31,19 +31,19 @@ export function parseFEN(fen: string): Position {
 
   // Parse FEN position
   for (let row = 0; row <= 7; row++) {
-    let index = 7 - row;
+    const index = 7 - row;
 
     let col = 0;
     let charIndex = 0;
 
     while (col <= 7) {
-      let char = fenPosition[index]?.charAt(charIndex);
+      const char = fenPosition[index]?.charAt(charIndex);
 
-      let number = Number(char);
+      const number = Number(char);
 
-      let squareIndex = row * 8 + col;
+      const squareIndex = row * 8 + col;
 
-      if (!isNaN(number)) {
+      if (!Number.isNaN(number)) {
         col += number;
         charIndex += 1;
       } else {
@@ -142,7 +142,7 @@ export function parseFEN(fen: string): Position {
   if (!fenSplitted[2]) {
     throw new Error("invalid FEN string");
   }
-  for (let char of fenSplitted[2]) {
+  for (const char of fenSplitted[2]) {
     switch (char) {
       case "K":
         pos.castleRights.whiteKingside = true;
@@ -165,7 +165,7 @@ export function parseFEN(fen: string): Position {
   } else if (fenSplitted[3] === "-") {
     pos.enPassantSquare = null;
   } else {
-    let enPassantSquare = parseNotation(fenSplitted[3]);
+    const enPassantSquare = parseNotation(fenSplitted[3]);
     pos.enPassantSquare = enPassantSquare;
   }
 
@@ -173,7 +173,7 @@ export function parseFEN(fen: string): Position {
   if (!fenSplitted[4]) {
     throw new Error("invalid FEN string");
   } else {
-    let halfMovesCount = Number(fenSplitted[4]);
+    const halfMovesCount = Number(fenSplitted[4]);
     pos.plyCount = halfMovesCount;
   }
 
@@ -181,7 +181,7 @@ export function parseFEN(fen: string): Position {
   if (!fenSplitted[5]) {
     throw new Error("invalid FEN string");
   } else {
-    let fullMovesCount = Number(fenSplitted[5]);
+    const fullMovesCount = Number(fenSplitted[5]);
     pos.movesCount = fullMovesCount;
   }
 

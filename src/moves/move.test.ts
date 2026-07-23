@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import {
   createMove,
-  getMoveIsCastle as getMoveIsCastle,
+  getMoveIsCastle,
   getMoveCapturePiece,
   getMoveFrom,
   getMoveIsCapture,

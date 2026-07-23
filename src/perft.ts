@@ -10,10 +10,10 @@ export function perft(position: Position, depth: number): number {
     return 1;
   }
 
-  let moves = generateAllMoves(position);
+  const moves = generateAllMoves(position);
 
   moves.forEach((m) => {
-    let newPos = makeMove(position, m);
+    const newPos = makeMove(position, m);
     if (position.sideToMove === Color.White) {
       if (
         !isSquareAttacked(newPos, newPos.kingSquares[Color.White], Color.Black)

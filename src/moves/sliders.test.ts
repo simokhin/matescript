@@ -1,19 +1,19 @@
 import { expect, test } from "bun:test";
 import { parseFEN } from "../position/fen";
 import { START_FEN } from "../constants";
-import { Color, type Move } from "../types";
+import { Color } from "../types";
 import { getBishopMoves, getQueenMoves, getRookMoves } from "./sliders";
 
 test("sliding pieces on starting position", () => {
-  let pos = parseFEN(START_FEN);
+  const pos = parseFEN(START_FEN);
 
-  let rookMoves = getRookMoves(0, pos.board, Color.White);
+  const rookMoves = getRookMoves(0, pos.board, Color.White);
   expect(rookMoves.length).toBe(0);
 
-  let bishopMoves = getBishopMoves(2, pos.board, Color.White);
+  const bishopMoves = getBishopMoves(2, pos.board, Color.White);
   expect(bishopMoves.length).toBe(0);
 
-  let queenMoves = getQueenMoves(3, pos.board, Color.White);
+  const queenMoves = getQueenMoves(3, pos.board, Color.White);
   expect(queenMoves.length).toBe(0);
 });
 

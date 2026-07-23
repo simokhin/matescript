@@ -8,12 +8,12 @@ export function getPawnMoves(
   color: Color,
   enPassantSquare: number | null,
 ): Move[] {
-  let moves: Move[] = [];
+  const moves: Move[] = [];
 
-  let offset = color === Color.White ? 1 : -1;
+  const offset = color === Color.White ? 1 : -1;
 
-  let row = Math.floor(square / 8);
-  let col = square % 8;
+  const row = Math.floor(square / 8);
+  const col = square % 8;
 
   let isLastRank = false; // Need to know for promotion moves
   let isStartingSquare = false; // Need to know for double pawn moves
@@ -33,10 +33,10 @@ export function getPawnMoves(
   }
 
   // Get one step pawn moves
-  let oneStepIndex = (row + offset) * 8 + col;
+  const oneStepIndex = (row + offset) * 8 + col;
 
   if (board[oneStepIndex] === null && !isLastRank) {
-    let newMove = createMove(
+    const newMove = createMove(
       square,
       oneStepIndex,
       false,
@@ -48,19 +48,19 @@ export function getPawnMoves(
     moves.push(newMove);
   } else if (board[oneStepIndex] === null && isLastRank) {
     for (let i = 0; i < 4; i++) {
-      let newMove = createMove(square, oneStepIndex, false, 0, i, false, false);
+      const newMove = createMove(square, oneStepIndex, false, 0, i, false, false);
       moves.push(newMove);
     }
   }
 
   // Get two step pawn moves
-  let twoStepIndex = (row + (offset + offset)) * 8 + col;
+  const twoStepIndex = (row + (offset + offset)) * 8 + col;
   if (
     isStartingSquare &&
     board[oneStepIndex] === null &&
     board[twoStepIndex] === null
   ) {
-    let newMove = createMove(
+    const newMove = createMove(
       square,
       twoStepIndex,
       false,
@@ -73,8 +73,8 @@ export function getPawnMoves(
   }
 
   // Get pawn capture moves
-  let leftCaptureSquare = (row + offset) * 8 + (col + -1);
-  let rightCaptureSquare = (row + offset) * 8 + (col + 1);
+  const leftCaptureSquare = (row + offset) * 8 + (col + -1);
+  const rightCaptureSquare = (row + offset) * 8 + (col + 1);
 
   // Get left capture moves
   if (
@@ -83,8 +83,8 @@ export function getPawnMoves(
     !isLastRank &&
     col - 1 >= 0
   ) {
-    let capturePiece = board[leftCaptureSquare]?.pieceType;
-    let newMove = createMove(
+    const capturePiece = board[leftCaptureSquare]?.pieceType;
+    const newMove = createMove(
       square,
       leftCaptureSquare,
       true,
@@ -100,9 +100,9 @@ export function getPawnMoves(
     isLastRank &&
     col - 1 >= 0
   ) {
-    let capturePiece = board[leftCaptureSquare]?.pieceType;
+    const capturePiece = board[leftCaptureSquare]?.pieceType;
     for (let i = 0; i < 4; i++) {
-      let newMove = createMove(
+      const newMove = createMove(
         square,
         leftCaptureSquare,
         true,
@@ -114,8 +114,8 @@ export function getPawnMoves(
       moves.push(newMove);
     }
   } else if (enPassantSquare === leftCaptureSquare && col - 1 >= 0) {
-    let capturedPiece = PieceType.Pawn;
-    let newMove = createMove(
+    const capturedPiece = PieceType.Pawn;
+    const newMove = createMove(
       square,
       leftCaptureSquare,
       true,
@@ -134,8 +134,8 @@ export function getPawnMoves(
     !isLastRank &&
     col + 1 <= 7
   ) {
-    let capturePiece = board[rightCaptureSquare]?.pieceType;
-    let newMove = createMove(
+    const capturePiece = board[rightCaptureSquare]?.pieceType;
+    const newMove = createMove(
       square,
       rightCaptureSquare,
       true,
@@ -151,9 +151,9 @@ export function getPawnMoves(
     isLastRank &&
     col + 1 <= 7
   ) {
-    let capturePiece = board[rightCaptureSquare]?.pieceType;
+    const capturePiece = board[rightCaptureSquare]?.pieceType;
     for (let i = 0; i < 4; i++) {
-      let newMove = createMove(
+      const newMove = createMove(
         square,
         rightCaptureSquare,
         true,
@@ -165,8 +165,8 @@ export function getPawnMoves(
       moves.push(newMove);
     }
   } else if (enPassantSquare === rightCaptureSquare && col + 1 <= 7) {
-    let capturedPiece = PieceType.Pawn;
-    let newMove = createMove(
+    const capturedPiece = PieceType.Pawn;
+    const newMove = createMove(
       square,
       rightCaptureSquare,
       true,

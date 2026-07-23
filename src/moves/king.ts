@@ -3,7 +3,6 @@ import { NOT_PROMOTION } from "../constants";
 import { createMove } from "./move";
 import {
   Color,
-  PieceType,
   type Board,
   type Delta,
   type Move,
@@ -26,20 +25,20 @@ export function getKingMoves(
   board: Board,
   color: Color,
 ): Move[] {
-  let kingMoves: Move[] = [];
+  const kingMoves: Move[] = [];
 
   const row = Math.floor(square / 8);
   const col = square % 8;
 
   for (const { deltaRow, deltaCol } of kingDeltas) {
-    let newRow = row + deltaRow;
-    let newCol = col + deltaCol;
+    const newRow = row + deltaRow;
+    const newCol = col + deltaCol;
 
     if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-      let newIndex = newRow * 8 + newCol;
+      const newIndex = newRow * 8 + newCol;
 
       if (board[newIndex] == null) {
-        let move = createMove(
+        const move = createMove(
           square,
           newIndex,
           false,
@@ -50,8 +49,8 @@ export function getKingMoves(
         );
         kingMoves.push(move);
       } else if (board[newIndex].color !== color) {
-        let piece = board[newIndex].pieceType;
-        let move = createMove(
+        const piece = board[newIndex].pieceType;
+        const move = createMove(
           square,
           newIndex,
           true,
@@ -69,7 +68,7 @@ export function getKingMoves(
 }
 
 export function getCastlingMove(position: Position): Move[] {
-  let castlingMoves: Move[] = [];
+  const castlingMoves: Move[] = [];
 
   if (position.sideToMove === Color.White) {
     if (position.castleRights.whiteKingside === true) {
@@ -80,7 +79,7 @@ export function getCastlingMove(position: Position): Move[] {
         !isSquareAttacked(position, 5, Color.Black) &&
         !isSquareAttacked(position, 6, Color.Black)
       ) {
-        let move = createMove(4, 6, false, 0, NOT_PROMOTION, false, true);
+        const move = createMove(4, 6, false, 0, NOT_PROMOTION, false, true);
         castlingMoves.push(move);
       }
     }
@@ -94,7 +93,7 @@ export function getCastlingMove(position: Position): Move[] {
         !isSquareAttacked(position, 3, Color.Black) &&
         !isSquareAttacked(position, 2, Color.Black)
       ) {
-        let move = createMove(4, 2, false, 0, NOT_PROMOTION, false, true);
+        const move = createMove(4, 2, false, 0, NOT_PROMOTION, false, true);
         castlingMoves.push(move);
       }
     }
@@ -107,7 +106,7 @@ export function getCastlingMove(position: Position): Move[] {
         !isSquareAttacked(position, 61, Color.White) &&
         !isSquareAttacked(position, 62, Color.White)
       ) {
-        let move = createMove(60, 62, false, 0, NOT_PROMOTION, false, true);
+        const move = createMove(60, 62, false, 0, NOT_PROMOTION, false, true);
         castlingMoves.push(move);
       }
     }
@@ -121,7 +120,7 @@ export function getCastlingMove(position: Position): Move[] {
         !isSquareAttacked(position, 59, Color.White) &&
         !isSquareAttacked(position, 58, Color.White)
       ) {
-        let move = createMove(60, 58, false, 0, NOT_PROMOTION, false, true);
+        const move = createMove(60, 58, false, 0, NOT_PROMOTION, false, true);
         castlingMoves.push(move);
       }
     }

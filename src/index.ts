@@ -6,7 +6,7 @@ import { Color } from "./types";
 import { makeLegalMove } from "./moves/makeMove";
 import { moveToNotation, notationToMove } from "./notation";
 
-let timeKeys: Record<Color, { time: string; inc: string }> = {
+const timeKeys: Record<Color, { time: string; inc: string }> = {
   [Color.White]: { time: "wtime", inc: "winc" },
   [Color.Black]: { time: "btime", inc: "binc" },
 };
@@ -14,7 +14,7 @@ let timeKeys: Record<Color, { time: string; inc: string }> = {
 let position = parseFEN(START_FEN);
 
 for await (const line of console) {
-  let parts = line.split(" ");
+  const parts = line.split(" ");
 
   switch (parts[0]) {
     case "uci":
@@ -25,6 +25,7 @@ for await (const line of console) {
     case "isready":
       console.log("readyok");
       break;
+    // biome-ignore lint/suspicious/noFallthroughSwitchClause: process.exit() never returns
     case "quit":
       process.exit();
     case "position":
@@ -32,11 +33,11 @@ for await (const line of console) {
         position = parseFEN(START_FEN);
 
         if (parts[2] === "moves") {
-          let moves = parts.slice(3);
+          const moves = parts.slice(3);
 
-          for (let move of moves) {
-            let m = notationToMove(move, position);
-            let newPos = makeLegalMove(position, m);
+          for (const move of moves) {
+            const m = notationToMove(move, position);
+            const newPos = makeLegalMove(position, m);
             if (newPos != null) {
               position = newPos;
             }
@@ -46,15 +47,15 @@ for await (const line of console) {
         if (parts[2] === undefined) {
           throw new Error("FEN string is undefined");
         }
-        let fenString = parts.slice(2, 8).join(" ");
+        const fenString = parts.slice(2, 8).join(" ");
         position = parseFEN(fenString);
 
         if (parts[8] === "moves") {
-          let moves = parts.slice(9);
+          const moves = parts.slice(9);
 
-          for (let move of moves) {
-            let m = notationToMove(move, position);
-            let newPos = makeLegalMove(position, m);
+          for (const move of moves) {
+            const m = notationToMove(move, position);
+            const newPos = makeLegalMove(position, m);
             if (newPos != null) {
               position = newPos;
             }
@@ -62,13 +63,13 @@ for await (const line of console) {
         }
       }
       break;
-    case "go":
-      let goParts = parts.slice(1);
-      let parsedGoParts: Record<string, string> = {};
+    case "go": {
+      const goParts = parts.slice(1);
+      const parsedGoParts: Record<string, string> = {};
 
       for (let i = 0; i < goParts.length; i += 2) {
-        let key = goParts[i];
-        let value = goParts[i + 1];
+        const key = goParts[i];
+        const value = goParts[i + 1];
 
         if (key !== undefined && value !== undefined) {
           parsedGoParts[key] = value;
@@ -76,43 +77,44 @@ for await (const line of console) {
       }
 
       if ("depth" in parsedGoParts) {
-        let depth: SearchParameters = {
+        const depth: SearchParameters = {
           name: "maxDepth",
           depth: Number(parsedGoParts.depth),
         };
 
-        let result = findBestMove(position, depth);
+        const result = findBestMove(position, depth);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("movetime" in parsedGoParts) {
-        let moveTime: SearchParameters = {
+        const moveTime: SearchParameters = {
           name: "timeLimit",
           limit: Number(parsedGoParts.movetime),
         };
 
-        let result = findBestMove(position, moveTime);
+        const result = findBestMove(position, moveTime);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("wtime" in parsedGoParts) {
-        let timeFotMove =
+        const timeFotMove =
           Number(parsedGoParts[timeKeys[position.sideToMove].time]) / 30 +
           Number(parsedGoParts[timeKeys[position.sideToMove].inc]) * 0.8;
 
-        let moveTime: SearchParameters = {
+        const moveTime: SearchParameters = {
           name: "timeLimit",
           limit: timeFotMove,
         };
 
-        let result = findBestMove(position, moveTime);
+        const result = findBestMove(position, moveTime);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       }
       break;
+    }
   }
 }

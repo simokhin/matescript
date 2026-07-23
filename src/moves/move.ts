@@ -1,4 +1,4 @@
-import { type Move, PieceType } from "../types";
+import type { Move, PieceType } from "../types";
 
 export function createMove(
   from: number,

@@ -1,6 +1,6 @@
 import { NOT_PROMOTION } from "../constants";
 import { createMove } from "./move";
-import { Color, type Board, type Delta, type Move } from "../types";
+import type { Color, Board, Delta, Move } from "../types";
 
 export const knightDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 2 },
@@ -18,20 +18,20 @@ export function getKnightMoves(
   board: Board,
   color: Color,
 ): Move[] {
-  let knightMoves: Move[] = [];
+  const knightMoves: Move[] = [];
 
   const row = Math.floor(square / 8);
   const col = square % 8;
 
   for (const { deltaRow, deltaCol } of knightDeltas) {
-    let newRow = row + deltaRow;
-    let newCol = col + deltaCol;
+    const newRow = row + deltaRow;
+    const newCol = col + deltaCol;
 
     if (newRow >= 0 && newRow <= 7 && newCol >= 0 && newCol <= 7) {
-      let newIndex = newRow * 8 + newCol;
+      const newIndex = newRow * 8 + newCol;
 
       if (board[newIndex] == null) {
-        let move = createMove(
+        const move = createMove(
           square,
           newIndex,
           false,
@@ -42,8 +42,8 @@ export function getKnightMoves(
         );
         knightMoves.push(move);
       } else if (board[newIndex].color !== color) {
-        let piece = board[newIndex].pieceType;
-        let move = createMove(
+        const piece = board[newIndex].pieceType;
+        const move = createMove(
           square,
           newIndex,
           true,

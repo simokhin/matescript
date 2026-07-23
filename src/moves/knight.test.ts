@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { parseFEN } from "../position/fen";
 import { START_FEN } from "../constants";
-import { Color, type Move } from "../types";
+import { Color } from "../types";
 import { getKnightMoves } from "./knight";
 
 test("generate knight moves", () => {

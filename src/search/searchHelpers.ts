@@ -12,8 +12,9 @@ export function getMoveScore(move: Move, position: Position): number {
   let score = 0;
 
   if (getMoveIsCapture(move)) {
-    let attacker: PieceType = position.board[getMoveFrom(move)]!.pieceType;
-    let victim: PieceType = getMoveCapturePiece(move);
+    // biome-ignore lint/style/noNonNullAssertion: getMoveFrom(move) always points at the square the moving piece came from, so it's never empty
+    const attacker: PieceType = position.board[getMoveFrom(move)]!.pieceType;
+    const victim: PieceType = getMoveCapturePiece(move);
 
     score = pieceWeights[victim] * 10 - pieceWeights[attacker];
   }
