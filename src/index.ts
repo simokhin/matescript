@@ -95,7 +95,7 @@ for await (const line of console) {
 
         let result = findBestMove(position, depth);
         if (result.bestMove !== undefined) {
-          console.log(`info nodes ${result.nodes}`);
+          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("movetime" in parsedGoParts) {
@@ -106,7 +106,7 @@ for await (const line of console) {
 
         let result = findBestMove(position, moveTime);
         if (result.bestMove !== undefined) {
-          console.log(`info nodes ${result.nodes}`);
+          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("wtime" in parsedGoParts) {
@@ -121,7 +121,7 @@ for await (const line of console) {
 
         let result = findBestMove(position, moveTime);
         if (result.bestMove !== undefined) {
-          console.log(`info nodes ${result.nodes}`);
+          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       }

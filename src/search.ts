@@ -1,8 +1,13 @@
 import { isSquareAttacked, oppositeColor, type Position } from "./board";
-import { evaluate } from "./evaluation";
-import { makeLegalMove } from "./move";
+import { evaluate, pieceWeights } from "./evaluation";
+import {
+  getMoveCapturePiece,
+  getMoveFrom,
+  getMoveIsCapture,
+  makeLegalMove,
+} from "./move";
 import { generateAllMoves } from "./movegen";
-import type { Move } from "./types";
+import type { Move, Piece, PieceType } from "./types";
 
 type SearchState = {
   deadline: number;
@@ -16,6 +21,7 @@ export type SearchParameters = MaxDepth | TimeLimitMs;
 type SearchResult = {
   bestMove: Move | undefined;
   nodes: number;
+  depth: number;
 };
 
 let searchState: SearchState = {
@@ -50,6 +56,7 @@ export function findBestMove(
   let depth = 1;
   while (depth <= maxDepth && Date.now() <= searchState.deadline) {
     let moves = generateAllMoves(position);
+    moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
     let currentBestMove: Move | undefined = bestMove;
     let alpha = -Infinity;
@@ -74,6 +81,7 @@ export function findBestMove(
         return {
           bestMove: bestMove,
           nodes: searchState.nodes,
+          depth: depth - 1,
         };
       } else {
         throw e;
@@ -88,6 +96,7 @@ export function findBestMove(
   return {
     bestMove: bestMove,
     nodes: searchState.nodes,
+    depth: depth - 1,
   };
 }
 
@@ -112,6 +121,7 @@ export function search(
   let bestValue = -Infinity;
 
   let moves = generateAllMoves(position);
+  moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
   for (let move of moves) {
     let newPos = makeLegalMove(position, move);
@@ -146,3 +156,16 @@ export function search(
 }
 
 class SearchTimeoutError extends Error {}
+
+function getMoveScore(move: Move, position: Position): number {
+  let score = 0;
+
+  if (getMoveIsCapture(move)) {
+    let attacker: PieceType = position.board[getMoveFrom(move)]!.pieceType;
+    let victim: PieceType = getMoveCapturePiece(move);
+
+    score = pieceWeights[victim] * 10 - pieceWeights[attacker];
+  }
+
+  return score;
+}

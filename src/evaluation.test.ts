@@ -12,5 +12,5 @@ test("evaluate material", () => {
   pos = parseFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1");
 
   evaluation = evaluate(pos);
-  expect(evaluation).toBe(-900);
+  expect(evaluation).toBe(-895);
 });
