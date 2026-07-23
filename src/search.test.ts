@@ -6,5 +6,5 @@ test("negamax test", () => {
   let pos = parseFEN("1R6/P7/1Nb2p2/6kp/8/6KP/3r2P1/8 b - - 0 47"); // Mate in 1
 
   let evaluation = search(pos, 2, -Infinity, Infinity);
-  expect(evaluation).toBe(Infinity);
+  expect(evaluation).toBe(1_000_001);
 });

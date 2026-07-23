@@ -29,6 +29,8 @@ let searchState: SearchState = {
   nodes: 0,
 };
 
+const MATE_SCORE = 1_000_000;
+
 export function findBestMove(
   position: Position,
   params: SearchParameters,
@@ -123,9 +125,13 @@ export function search(
   let moves = generateAllMoves(position);
   moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
+  let legalMoves: Move[] = [];
+
   for (let move of moves) {
     let newPos = makeLegalMove(position, move);
+
     if (newPos != null) {
+      legalMoves.push(move);
       let evaluation = -search(newPos, depth - 1, -beta, -alpha);
 
       if (evaluation > bestValue) {
@@ -138,7 +144,7 @@ export function search(
     }
   }
 
-  if (bestValue === -Infinity) {
+  if (legalMoves.length === 0) {
     if (
       isSquareAttacked(
         position,
@@ -146,7 +152,7 @@ export function search(
         oppositeColor(position.sideToMove),
       )
     ) {
-      return -Infinity;
+      return -(MATE_SCORE + depth);
     } else {
       return 0;
     }
@@ -157,6 +163,7 @@ export function search(
 
 class SearchTimeoutError extends Error {}
 
+// Gives the number needed to sort the moves
 function getMoveScore(move: Move, position: Position): number {
   let score = 0;
 
