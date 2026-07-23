@@ -33,3 +33,15 @@ export const NOT_PROMOTION: PieceType = PieceType.King;
 
 export const START_FEN =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
+export const letters: Record<PieceType, string> = {
+  [PieceType.Rook]: "r",
+  [PieceType.Knight]: "n",
+  [PieceType.Bishop]: "b",
+  [PieceType.Queen]: "q",
+  [PieceType.King]: "k",
+  [PieceType.Pawn]: "p",
+};
+
+export const ENGINE_NAME = "TypeScript Chess Engine";
+export const AUTHOR_NAME = "Nikita Simokhin";

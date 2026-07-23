@@ -1,4 +1,3 @@
-import { letters } from ".";
 import { parseNotation, type Position } from "./board";
 import { Color, PieceType } from "./types";
 

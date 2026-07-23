@@ -1,8 +1,33 @@
 import { isSquareAttacked, oppositeColor, type Position } from "./board";
 import { evaluate } from "./evaluation";
-import { makeLegalMove, makeMove } from "./move";
+import { makeLegalMove } from "./move";
 import { generateAllMoves } from "./movegen";
-import { Color } from "./types";
+import type { Move } from "./types";
+
+export function findBestMove(
+  position: Position,
+  depth: number,
+): Move | undefined {
+  let bestMove: Move | undefined = undefined;
+  let moves = generateAllMoves(position);
+
+  let bestScore = -Infinity;
+
+  for (let move of moves) {
+    let newPos = makeLegalMove(position, move);
+    if (newPos == null) {
+      continue;
+    }
+    let evaluation = -search(newPos, depth - 1);
+
+    if (evaluation > bestScore) {
+      bestScore = evaluation;
+      bestMove = move;
+    }
+  }
+
+  return bestMove;
+}
 
 export function search(position: Position, depth: number) {
   if (depth === 0) {
