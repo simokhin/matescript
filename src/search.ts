@@ -52,7 +52,8 @@ export function findBestMove(
     let moves = generateAllMoves(position);
 
     let currentBestMove: Move | undefined = bestMove;
-    let bestScore = -Infinity;
+    let alpha = -Infinity;
+    let beta = Infinity;
 
     try {
       for (let move of moves) {
@@ -61,10 +62,10 @@ export function findBestMove(
           continue;
         }
 
-        let evaluation = -search(newPos, depth - 1);
+        let evaluation = -search(newPos, depth - 1, -beta, -alpha);
 
-        if (evaluation > bestScore) {
-          bestScore = evaluation;
+        if (evaluation > alpha) {
+          alpha = evaluation;
           currentBestMove = move;
         }
       }
@@ -90,7 +91,12 @@ export function findBestMove(
   };
 }
 
-export function search(position: Position, depth: number) {
+export function search(
+  position: Position,
+  depth: number,
+  alpha: number,
+  beta: number,
+) {
   searchState.nodes += 1;
 
   if (searchState.nodes % 2048 === 0) {
@@ -110,10 +116,14 @@ export function search(position: Position, depth: number) {
   for (let move of moves) {
     let newPos = makeLegalMove(position, move);
     if (newPos != null) {
-      let evaluation = -search(newPos, depth - 1);
+      let evaluation = -search(newPos, depth - 1, -beta, -alpha);
 
       if (evaluation > bestValue) {
         bestValue = evaluation;
+        alpha = Math.max(bestValue, alpha);
+      }
+      if (alpha >= beta) {
+        break;
       }
     }
   }
