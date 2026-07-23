@@ -1,5 +1,5 @@
-import { parseNotation, type Position } from "./board";
-import { Color, PieceType } from "./types";
+import { parseNotation } from "./board";
+import { Color, PieceType, type Position } from "../types";
 
 export function parseFEN(fen: string): Position {
   let pos: Position = {

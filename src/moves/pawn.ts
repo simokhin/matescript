@@ -1,6 +1,6 @@
-import type { Board } from "../board";
-import { createMove } from "../move";
-import { Color, NOT_PROMOTION, PieceType, type Move } from "../types";
+import { NOT_PROMOTION } from "../constants";
+import { createMove } from "./move";
+import { Color, PieceType, type Board, type Move } from "../types";
 
 export function getPawnMoves(
   square: number,

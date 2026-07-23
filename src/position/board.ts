@@ -1,24 +1,7 @@
-import { kingDeltas } from "./moves/king";
-import { knightDeltas } from "./moves/knight";
-import { bishopDeltas, rookDeltas } from "./moves/sliders";
-import { Color, PieceType, type Square } from "./types";
-
-export type Board = Square[];
-
-export type Position = {
-  board: Square[];
-  sideToMove: Color;
-  castleRights: {
-    whiteKingside: boolean;
-    whiteQueenside: boolean;
-    blackKingside: boolean;
-    blackQueenside: boolean;
-  };
-  enPassantSquare: number | null;
-  plyCount: number;
-  movesCount: number;
-  kingSquares: Record<Color, number>;
-};
+import { kingDeltas } from "../moves/king";
+import { knightDeltas } from "../moves/knight";
+import { bishopDeltas, rookDeltas } from "../moves/sliders";
+import { Color, PieceType, type Board, type Position } from "../types";
 
 export function createStartPosition(): Position {
   let pos: Position = {

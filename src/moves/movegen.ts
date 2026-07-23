@@ -1,9 +1,8 @@
-import type { Position } from "./board";
-import { getCastlingMove, getKingMoves } from "./moves/king";
-import { getKnightMoves } from "./moves/knight";
-import { getPawnMoves } from "./moves/pawn";
-import { getBishopMoves, getQueenMoves, getRookMoves } from "./moves/sliders";
-import { PieceType, type Move } from "./types";
+import { getCastlingMove, getKingMoves } from "./king";
+import { getKnightMoves } from "./knight";
+import { getPawnMoves } from "./pawn";
+import { getBishopMoves, getQueenMoves, getRookMoves } from "./sliders";
+import { PieceType, type Move, type Position } from "../types";
 
 export function generateAllMoves(position: Position): Move[] {
   let moves: Move[] = [];

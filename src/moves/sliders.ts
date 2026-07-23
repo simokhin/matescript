@@ -1,11 +1,6 @@
-import { createMove } from "../move";
-import {
-  Color,
-  NOT_PROMOTION,
-  type Delta,
-  type Move,
-  type Square,
-} from "../types";
+import { NOT_PROMOTION } from "../constants";
+import { createMove } from "./move";
+import { Color, type Delta, type Move, type Square } from "../types";
 
 export const rookDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 0 },

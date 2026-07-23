@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { parseFEN } from "./fen";
+import { parseFEN } from "../position/fen";
 import { search } from "./search";
 
 test("negamax test", () => {

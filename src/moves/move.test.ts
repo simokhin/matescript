@@ -8,10 +8,11 @@ import {
   getMoveIsEnPassant,
   getMovePromotionPiece,
   getMoveTo,
-  makeMove,
 } from "./move";
-import { Color, NOT_PROMOTION, PieceType, START_FEN } from "./types";
-import { parseFEN } from "./fen";
+import { NOT_PROMOTION, START_FEN } from "../constants";
+import { Color, PieceType } from "../types";
+import { parseFEN } from "../position/fen";
+import { makeMove } from "./makeMove";
 
 test("create a move and then extract data from the move", () => {
   let move = createMove(12, 28, false, 0, NOT_PROMOTION, true, false);

@@ -1,4 +1,3 @@
-import type { Position } from "./board";
 import {
   BISHOP_PST,
   KING_PST,
@@ -7,7 +6,7 @@ import {
   QUEEN_PST,
   ROOK_PST,
 } from "./pst";
-import { Color, PieceType } from "./types";
+import { Color, PieceType, type Position } from "../types";
 
 export const pieceWeights: Record<PieceType, number> = {
   [PieceType.Rook]: 500,
@@ -18,7 +17,7 @@ export const pieceWeights: Record<PieceType, number> = {
   [PieceType.King]: 0,
 };
 
-const pieceSquareTables: Record<PieceType, number[]> = {
+export const pieceSquareTables: Record<PieceType, number[]> = {
   [PieceType.Rook]: ROOK_PST,
   [PieceType.Knight]: KNIGHT_PST,
   [PieceType.Bishop]: BISHOP_PST,

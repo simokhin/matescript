@@ -1,7 +1,7 @@
-import { isSquareAttacked, type Position } from "./board";
-import { makeMove } from "./move";
-import { generateAllMoves } from "./movegen";
-import { Color } from "./types";
+import { isSquareAttacked } from "./position/board";
+import { generateAllMoves } from "./moves/movegen";
+import { Color, type Position } from "./types";
+import { makeMove } from "./moves/makeMove";
 
 export function perft(position: Position, depth: number): number {
   let nodes = 0;

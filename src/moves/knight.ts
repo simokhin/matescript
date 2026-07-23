@@ -1,6 +1,6 @@
-import type { Board } from "../board";
-import { createMove } from "../move";
-import { Color, NOT_PROMOTION, type Delta, type Move } from "../types";
+import { NOT_PROMOTION } from "../constants";
+import { createMove } from "./move";
+import { Color, type Board, type Delta, type Move } from "../types";
 
 export const knightDeltas: Delta[] = [
   { deltaRow: 1, deltaCol: 2 },

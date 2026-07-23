@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { createStartPosition } from "../board";
+import { createStartPosition } from "../position/board";
 import { getPawnMoves } from "./pawn";
 import { Color } from "../types";
 

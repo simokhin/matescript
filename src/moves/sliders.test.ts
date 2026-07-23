@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
-import { parseFEN } from "../fen";
-import { Color, START_FEN, type Move } from "../types";
+import { parseFEN } from "../position/fen";
+import { START_FEN } from "../constants";
+import { Color, type Move } from "../types";
 import { getBishopMoves, getQueenMoves, getRookMoves } from "./sliders";
 
 test("sliding pieces on starting position", () => {

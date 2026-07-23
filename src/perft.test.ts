@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
-import { parseFEN } from "./fen";
-import { START_FEN } from "./types";
 import { perft } from "./perft";
+import { parseFEN } from "./position/fen";
+import { START_FEN } from "./constants";
 
 test.skip("perft test", () => {
   let pos = parseFEN(START_FEN);

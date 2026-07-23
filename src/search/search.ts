@@ -1,35 +1,17 @@
-import { isSquareAttacked, oppositeColor, type Position } from "./board";
-import { evaluate, pieceWeights } from "./evaluation";
-import {
-  getMoveCapturePiece,
-  getMoveFrom,
-  getMoveIsCapture,
-  makeLegalMove,
-} from "./move";
-import { generateAllMoves } from "./movegen";
-import type { Move, Piece, PieceType } from "./types";
+import { isSquareAttacked, oppositeColor } from "../position/board";
+import { evaluate } from "./evaluation";
+import { generateAllMoves } from "../moves/movegen";
+import type { Move, Position } from "../types";
+import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
+import type { SearchParameters, SearchResult, SearchState } from "./types";
+import { makeLegalMove } from "../moves/makeMove";
 
-type SearchState = {
-  deadline: number;
-  nodes: number;
-};
-
-type MaxDepth = { name: "maxDepth"; depth: number };
-type TimeLimitMs = { name: "timeLimit"; limit: number };
-export type SearchParameters = MaxDepth | TimeLimitMs;
-
-type SearchResult = {
-  bestMove: Move | undefined;
-  nodes: number;
-  depth: number;
-};
+const MATE_SCORE = 1_000_000;
 
 let searchState: SearchState = {
   deadline: 0,
   nodes: 0,
 };
-
-const MATE_SCORE = 1_000_000;
 
 export function findBestMove(
   position: Position,
@@ -159,20 +141,4 @@ export function search(
   }
 
   return bestValue;
-}
-
-class SearchTimeoutError extends Error {}
-
-// Gives the number needed to sort the moves
-function getMoveScore(move: Move, position: Position): number {
-  let score = 0;
-
-  if (getMoveIsCapture(move)) {
-    let attacker: PieceType = position.board[getMoveFrom(move)]!.pieceType;
-    let victim: PieceType = getMoveCapturePiece(move);
-
-    score = pieceWeights[victim] * 10 - pieceWeights[attacker];
-  }
-
-  return score;
 }

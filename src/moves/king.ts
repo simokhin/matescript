@@ -1,11 +1,13 @@
-import { isSquareAttacked, type Board, type Position } from "../board";
-import { createMove } from "../move";
+import { isSquareAttacked } from "../position/board";
+import { NOT_PROMOTION } from "../constants";
+import { createMove } from "./move";
 import {
   Color,
-  NOT_PROMOTION,
   PieceType,
+  type Board,
   type Delta,
   type Move,
+  type Position,
 } from "../types";
 
 export const kingDeltas: Delta[] = [
