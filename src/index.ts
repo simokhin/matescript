@@ -12,6 +12,7 @@ const timeKeys: Record<Color, { time: string; inc: string }> = {
 };
 
 let position = parseFEN(START_FEN);
+let gameHistory: number[] = [];
 
 for await (const line of console) {
   const parts = line.split(" ");
@@ -32,13 +33,18 @@ for await (const line of console) {
       if (parts[1] === "startpos") {
         position = parseFEN(START_FEN);
 
+        gameHistory = [];
+        gameHistory.push(position.hash);
+
         if (parts[2] === "moves") {
           const moves = parts.slice(3);
 
           for (const move of moves) {
             const m = notationToMove(move, position);
             const newPos = makeLegalMove(position, m);
+
             if (newPos != null) {
+              gameHistory.push(newPos.hash);
               position = newPos;
             }
           }
@@ -50,6 +56,9 @@ for await (const line of console) {
         const fenString = parts.slice(2, 8).join(" ");
         position = parseFEN(fenString);
 
+        gameHistory = [];
+        gameHistory.push(position.hash);
+
         if (parts[8] === "moves") {
           const moves = parts.slice(9);
 
@@ -57,6 +66,7 @@ for await (const line of console) {
             const m = notationToMove(move, position);
             const newPos = makeLegalMove(position, m);
             if (newPos != null) {
+              gameHistory.push(newPos.hash);
               position = newPos;
             }
           }
@@ -82,7 +92,7 @@ for await (const line of console) {
           depth: Number(parsedGoParts.depth),
         };
 
-        const result = findBestMove(position, depth);
+        const result = findBestMove(position, depth, gameHistory);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
@@ -93,7 +103,7 @@ for await (const line of console) {
           limit: Number(parsedGoParts.movetime),
         };
 
-        const result = findBestMove(position, moveTime);
+        const result = findBestMove(position, moveTime, gameHistory);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
@@ -108,7 +118,7 @@ for await (const line of console) {
           limit: timeFotMove,
         };
 
-        const result = findBestMove(position, moveTime);
+        const result = findBestMove(position, moveTime, gameHistory);
         if (result.bestMove !== undefined) {
           console.log(`info depth ${result.depth} nodes ${result.nodes}`);
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);

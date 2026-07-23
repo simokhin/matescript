@@ -17,6 +17,7 @@ export const searchState: SearchState = {
 export function findBestMove(
   position: Position,
   params: SearchParameters,
+  history: number[],
 ): SearchResult {
   let bestMove: Move | undefined;
 
@@ -54,7 +55,17 @@ export function findBestMove(
           continue;
         }
 
-        const evaluation = -search(newPos, depth - 1, -beta, -alpha);
+        let evaluation: number;
+
+        const repeat = history.includes(newPos.hash);
+        if (repeat) {
+          evaluation = 0;
+        } else {
+          evaluation = -search(newPos, depth - 1, -beta, -alpha, [
+            ...history,
+            newPos.hash,
+          ]);
+        }
 
         if (evaluation > alpha) {
           alpha = evaluation;
@@ -90,6 +101,7 @@ export function search(
   depth: number,
   alpha: number,
   beta: number,
+  history: number[],
 ) {
   searchState.nodes += 1;
 
@@ -101,7 +113,7 @@ export function search(
   }
 
   if (depth === 0) {
-    return quiescence(position, alpha, beta);
+    return quiescence(position, alpha, beta, history);
   }
 
   const originalAlpha = alpha;
@@ -124,7 +136,18 @@ export function search(
 
     if (newPos != null) {
       legalMoves.push(move);
-      const evaluation = -search(newPos, depth - 1, -beta, -alpha);
+
+      let evaluation: number;
+
+      const repeat = history.includes(newPos.hash);
+      if (repeat) {
+        evaluation = 0;
+      } else {
+        evaluation = -search(newPos, depth - 1, -beta, -alpha, [
+          ...history,
+          newPos.hash,
+        ]);
+      }
 
       if (evaluation > bestValue) {
         bestValue = evaluation;
@@ -152,7 +175,7 @@ export function search(
     }
   }
 
-  let ttFlag;
+  let ttFlag: number;
   if (bestValue <= originalAlpha) {
     ttFlag = UPPERBOUND;
   } else if (bestValue >= beta) {

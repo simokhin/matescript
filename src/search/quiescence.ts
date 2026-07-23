@@ -11,6 +11,7 @@ export function quiescence(
   position: Position,
   alpha: number,
   beta: number,
+  history: number[],
 ): number {
   searchState.nodes += 1;
 
@@ -47,7 +48,7 @@ export function quiescence(
     const newPos = makeLegalMove(position, move);
 
     if (newPos != null) {
-      const evaluation = -quiescence(newPos, -beta, -alpha);
+      const evaluation = -quiescence(newPos, -beta, -alpha, history);
 
       if (evaluation > bestValue) {
         bestValue = evaluation;
@@ -60,7 +61,7 @@ export function quiescence(
     }
   }
 
-  let ttFlag;
+  let ttFlag: number;
   if (bestValue <= originalAlpha) {
     ttFlag = UPPERBOUND;
   } else if (bestValue >= beta) {
