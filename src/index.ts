@@ -7,7 +7,7 @@ import {
   makeLegalMove,
 } from "./move";
 import { generateAllMoves } from "./movegen";
-import { findBestMove } from "./search";
+import { findBestMove, type SearchParameters } from "./search";
 import {
   AUTHOR_NAME,
   ENGINE_NAME,
@@ -70,9 +70,22 @@ for await (const line of console) {
       break;
     case "go":
       if (parts[1] === "depth") {
-        let depth = Number(parts[2]);
+        let depth: SearchParameters = {
+          name: "maxDepth",
+          depth: Number(parts[2]),
+        };
 
         let move = findBestMove(position, depth);
+        if (move !== undefined) {
+          console.log(`bestmove ${moveToNotation(move)}`);
+        }
+      } else if (parts[1] === "movetime") {
+        let moveTime: SearchParameters = {
+          name: "timeLimit",
+          limit: Number(parts[2]),
+        };
+
+        let move = findBestMove(position, moveTime);
         if (move !== undefined) {
           console.log(`bestmove ${moveToNotation(move)}`);
         }
