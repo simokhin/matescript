@@ -1,11 +1,25 @@
+import { NOT_PROMOTION } from "../src/constants";
 import { makeLegalMove, makeMove } from "../src/moves/makeMove";
-import { getMoveFrom, getMoveTo } from "../src/moves/move";
+import {
+  getMoveFrom,
+  getMoveIsCapture,
+  getMovePromotionPiece,
+  getMoveTo,
+} from "../src/moves/move";
 import { generateAllMoves } from "../src/moves/movegen";
-import { moveToNotation } from "../src/notation";
-import type { Piece, Position } from "../src/types";
-import { pieces } from "./constants";
+import { moveToNotation, notationToMove } from "../src/notation";
+import { isSquareAttacked, oppositeColor } from "../src/position/board";
+import type { Move, Piece, Position } from "../src/types";
+import { pieces, sounds } from "./constants";
 
 let pos: Position;
+
+const audioCache = {
+  move: new Audio(sounds.move),
+  capture: new Audio(sounds.capture),
+  check: new Audio(sounds.check),
+  promotion: new Audio(sounds.promotion),
+};
 
 const worker = new Worker(new URL("./engineWorker.ts", import.meta.url), {
   type: "module",
@@ -52,7 +66,15 @@ worker.onmessage = (event) => {
               let move = moveToNotation(legalMoves[0]!);
 
               worker.postMessage({ type: "move", move: move });
+
+              // Play move sound
+              let newPos = makeLegalMove(pos, legalMoves[0]!);
+              playMoveSound(legalMoves[0]!, newPos!);
+
+              // Get an updated board
               worker.postMessage({ type: "getBoard" });
+
+              // Get engine's move
               worker.postMessage({ type: "go", movetime: 1000 });
             } else if (legalMoves.length === 0) {
               selectSquare(square);
@@ -77,6 +99,13 @@ worker.onmessage = (event) => {
       }
     }
   } else if (event.data.type === "bestmove") {
+    // Play move's sound for engine moves
+    const engineMove = notationToMove(event.data.move, pos);
+    const positionAfter = makeLegalMove(pos, engineMove);
+    if (positionAfter != null) {
+      playMoveSound(engineMove, positionAfter);
+    }
+
     worker.postMessage({ type: "getBoard" });
   }
 };
@@ -85,6 +114,7 @@ let selectedSquare: number | null = null;
 
 const squareDivs: HTMLDivElement[] = new Array(64);
 
+// Select and highlight legal moves on the board
 function selectSquare(square: number) {
   selectedSquare = square;
 
@@ -95,8 +125,29 @@ function selectSquare(square: number) {
     (m) => makeLegalMove(pos, m) != null,
   );
 
-  // Highlight lelal moves on the board
   for (const m of legalMoves) {
     squareDivs[getMoveTo(m)]?.classList.add("square--highlight");
+  }
+}
+
+function playMoveSound(move: Move, positionAfter: Position) {
+  if (
+    isSquareAttacked(
+      positionAfter,
+      positionAfter.kingSquares[positionAfter.sideToMove],
+      oppositeColor(positionAfter.sideToMove),
+    )
+  ) {
+    audioCache.check.currentTime = 0;
+    audioCache.check.play();
+  } else if (getMoveIsCapture(move)) {
+    audioCache.capture.currentTime = 0;
+    audioCache.capture.play();
+  } else if (getMovePromotionPiece(move) !== NOT_PROMOTION) {
+    audioCache.promotion.currentTime = 0;
+    audioCache.promotion.play();
+  } else {
+    audioCache.move.currentTime = 0;
+    audioCache.move.play();
   }
 }
