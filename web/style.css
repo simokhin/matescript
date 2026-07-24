@@ -6,8 +6,8 @@
     --color-square-dark: #3a4048;
     --color-accent: #d9782d;
     --color-highlight: #5b7a8c;
-    --color-picker-bg:
-        #4a5058 --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --color-picker-bg: #4a5058;
+    --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
 }
 

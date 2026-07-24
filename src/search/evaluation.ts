@@ -28,6 +28,9 @@ export const pieceSquareTables: Record<PieceType, number[]> = {
   [PieceType.King]: KING_PST,
 };
 
+const PASSED_PAWN_MG = [0, 5, 10, 20, 35, 60, 100, 0];
+const PASSED_PAWN_EG = [0, 10, 20, 40, 70, 120, 200, 0];
+
 export function evaluate(position: Position): number {
   let evaluation = 0;
 
@@ -36,22 +39,20 @@ export function evaluate(position: Position): number {
   const phase = calculatePhase(position);
 
   position.board.forEach((p, i) => {
-    if (p != null) {
-      if (p?.color === color) {
-        evaluation += pieceWeights[p.pieceType];
-        if (p.color === Color.White) {
-          evaluation += getPstValue(p.pieceType, i, phase);
-        } else {
-          evaluation += getPstValue(p.pieceType, i ^ 56, phase);
-        }
-      } else {
-        evaluation -= pieceWeights[p.pieceType];
-        if (p.color === Color.White) {
-          evaluation -= getPstValue(p.pieceType, i, phase);
-        } else {
-          evaluation -= getPstValue(p.pieceType, i ^ 56, phase);
-        }
-      }
+    if (p == null) {
+      return;
+    }
+
+    const sign = p.color === color ? 1 : -1;
+    const normalizedSquare = p.color === Color.White ? i : i ^ 56;
+    const rank = Math.floor(i / 8);
+    const normalizedRank = p.color === Color.White ? rank : 7 - rank;
+
+    evaluation += sign * pieceWeights[p.pieceType];
+    evaluation += sign * getPstValue(p.pieceType, normalizedSquare, phase);
+
+    if (p.pieceType === PieceType.Pawn && isPassedPawn(position, i, p.color)) {
+      evaluation += sign * getPassedPawnBonus(normalizedRank, phase);
     }
   });
 
@@ -85,6 +86,13 @@ function calculatePhase(position: Position): number {
   });
 
   return score;
+}
+
+function getPassedPawnBonus(rank: number, phase: number): number {
+  let mg = PASSED_PAWN_MG[rank]!;
+  let eg = PASSED_PAWN_EG[rank]!;
+
+  return (mg * phase + eg * (24 - phase)) / 24;
 }
 
 function getPstValue(
@@ -156,4 +164,33 @@ function pawnStructureScore(
   }
 
   return penalty;
+}
+
+function isPassedPawn(
+  position: Position,
+  square: number,
+  color: Color,
+): boolean {
+  const file = square % 8;
+  const rank = Math.floor(square / 8);
+
+  const enemyColor = oppositeColor(color);
+  const direction = color === Color.White ? 1 : -1;
+
+  for (let r = rank + direction; r >= 0 && r <= 7; r += direction) {
+    for (let f = file - 1; f <= file + 1; f++) {
+      if (f < 0 || f > 7) {
+        continue;
+      }
+
+      const targetSquare = r * 8 + f;
+      const piece = position.board[targetSquare];
+
+      if (piece?.color === enemyColor && piece.pieceType === PieceType.Pawn) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
