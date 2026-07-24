@@ -5,7 +5,7 @@
     --color-square-light: #e8e4dc;
     --color-square-dark: #3a4048;
     --color-accent: #d9782d;
-
+    --color-highlight: #5b7a8c;
     --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
 }
@@ -51,11 +51,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .square img {
-    width: 90%;
-    height: 90%;
+    width: 95%;
+    height: 95%;
 }
 
 .square--light {
@@ -64,4 +65,17 @@ body {
 
 .square--dark {
     background-color: var(--color-square-dark);
+}
+
+.square--highlight::after {
+    content: "";
+    width: 24%;
+    height: 24%;
+    border-radius: 50%;
+    background-color: var(--color-highlight);
+    opacity: 0.6;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

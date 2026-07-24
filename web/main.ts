@@ -27,22 +27,16 @@ worker.onmessage = (event) => {
         let square = r * 8 + c;
 
         let squareDiv = document.createElement("div");
+        squareDivs[square] = squareDiv;
 
         squareDiv.addEventListener("click", () => {
-          if (selectedSquare === null && pos.board[square] != null) {
-            selectedSquare = square;
-
-            const moves = generateAllMoves(pos);
-            const fromSquareMoves = moves.filter(
-              (m) => getMoveFrom(m) === square,
-            );
-
-            const legalMoves = fromSquareMoves.filter(
-              (m) => makeLegalMove(pos, m) != null,
-            );
-
-            console.log(legalMoves);
+          if (selectedSquare === null) {
+            selectSquare(square);
           } else if (selectedSquare != null) {
+            squareDivs.forEach((div) =>
+              div.classList.remove("square--highlight"),
+            );
+
             const moves = generateAllMoves(pos);
             const toSquareMoves = moves.filter(
               (m) =>
@@ -61,7 +55,7 @@ worker.onmessage = (event) => {
               worker.postMessage({ type: "getBoard" });
               worker.postMessage({ type: "go", movetime: 1000 });
             } else if (legalMoves.length === 0) {
-              selectedSquare = null;
+              selectSquare(square);
             }
           }
         });
@@ -88,3 +82,21 @@ worker.onmessage = (event) => {
 };
 
 let selectedSquare: number | null = null;
+
+const squareDivs: HTMLDivElement[] = new Array(64);
+
+function selectSquare(square: number) {
+  selectedSquare = square;
+
+  const moves = generateAllMoves(pos);
+  const fromSquareMoves = moves.filter((m) => getMoveFrom(m) === square);
+
+  const legalMoves = fromSquareMoves.filter(
+    (m) => makeLegalMove(pos, m) != null,
+  );
+
+  // Highlight lelal moves on the board
+  for (const m of legalMoves) {
+    squareDivs[getMoveTo(m)]?.classList.add("square--highlight");
+  }
+}
