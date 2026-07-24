@@ -12,6 +12,12 @@
     "typescript": "^5"
   },
   "scripts": {
-    "build": "bun build ./src/index.ts --compile --outfile myengine"
+    "build": "bun build ./src/index.ts --compile --outfile myengine",
+    "dev": "vite",
+    "build:web": "vite build",
+    "preview": "vite preview",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p web/tsconfig.json",
+    "lint": "biome check ."
   }
 }
