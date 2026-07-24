@@ -14,6 +14,7 @@ import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
 import { getMoveIsCapture } from "../moves/move";
 
 export const MATE_SCORE = 1_000_000;
+export const INFINITY_SCORE = 1_000_000_000;
 
 export const searchState: SearchState = {
   deadline: 0,
@@ -54,8 +55,8 @@ export function findBestMove(
     moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
 
     let currentBestMove: Move | undefined = bestMove;
-    let alpha = -Infinity;
-    const beta = Infinity;
+    let alpha = -INFINITY_SCORE;
+    const beta = INFINITY_SCORE;
 
     try {
       for (const move of moves) {
