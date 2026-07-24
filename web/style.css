@@ -314,3 +314,50 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
 }
+
+.engine-info__thinking {
+    color: var(--color-highlight);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    animation: engine-thinking-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes engine-thinking-pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .engine-info__thinking {
+        animation: none;
+    }
+}
+
+#settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#settings-form[hidden] {
+    display: none;
+}
+
+.settings-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.settings-summary[hidden] {
+    display: none;
+}
+
+#new-game-button {
+    padding: 0.4rem 1rem;
+}

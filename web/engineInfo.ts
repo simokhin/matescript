@@ -25,6 +25,20 @@ export function resetEngineInfo(): void {
   engineInfoDiv.appendChild(placeholder);
 }
 
+export function renderThinking(): void {
+  const engineInfoDiv = document.getElementById("engine-info");
+  if (engineInfoDiv == null) {
+    return;
+  }
+
+  engineInfoDiv.innerHTML = "";
+
+  const row = document.createElement("div");
+  row.className = "engine-info__thinking";
+  row.textContent = "Thinking…";
+  engineInfoDiv.appendChild(row);
+}
+
 export function renderGameOver(message: string): void {
   const engineInfoDiv = document.getElementById("engine-info");
   if (engineInfoDiv == null) {

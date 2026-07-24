@@ -10,63 +10,80 @@
             <aside class="panel--settings">
                 <h2>New game</h2>
 
-                <div class="field">
-                    <span class="field__label">Play as</span>
-                    <div class="side-toggle">
-                        <button
-                            type="button"
-                            class="side-option is-selected"
-                            data-side="white"
-                            aria-pressed="true"
-                        >
-                            <span
-                                class="side-option__swatch side-option__swatch--white"
-                            ></span>
-                            White
-                        </button>
-                        <button
-                            type="button"
-                            class="side-option"
-                            data-side="black"
-                            aria-pressed="false"
-                        >
-                            <span
-                                class="side-option__swatch side-option__swatch--black"
-                            ></span>
-                            Black
-                        </button>
+                <div id="settings-form">
+                    <div class="field">
+                        <span class="field__label">Play as</span>
+                        <div class="side-toggle">
+                            <button
+                                type="button"
+                                class="side-option is-selected"
+                                data-side="white"
+                                aria-pressed="true"
+                            >
+                                <span
+                                    class="side-option__swatch side-option__swatch--white"
+                                ></span>
+                                White
+                            </button>
+                            <button
+                                type="button"
+                                class="side-option"
+                                data-side="black"
+                                aria-pressed="false"
+                            >
+                                <span
+                                    class="side-option__swatch side-option__swatch--black"
+                                ></span>
+                                Black
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="field">
-                    <label class="field__label" for="movetime-input"
-                        >Time per move (ms)</label
+                    <div class="field">
+                        <label class="field__label" for="movetime-input"
+                            >Time per move (ms)</label
+                        >
+                        <input
+                            id="movetime-input"
+                            class="field__input"
+                            type="number"
+                            min="50"
+                            step="50"
+                            value="1000"
+                        />
+                    </div>
+
+                    <div class="field">
+                        <label class="field__label" for="fen-input"
+                            >Starting position (FEN)</label
+                        >
+                        <input
+                            id="fen-input"
+                            class="field__input field__input--mono"
+                            type="text"
+                            placeholder="Leave empty for standard start"
+                        />
+                    </div>
+
+                    <button
+                        id="start-game"
+                        class="start-button"
+                        type="button"
                     >
-                    <input
-                        id="movetime-input"
-                        class="field__input"
-                        type="number"
-                        min="50"
-                        step="50"
-                        value="1000"
-                    />
+                        Start game
+                    </button>
                 </div>
 
-                <div class="field">
-                    <label class="field__label" for="fen-input"
-                        >Starting position (FEN)</label
+                <div id="settings-summary" class="settings-summary" hidden>
+                    <p id="settings-summary-text" class="field__label"></p>
+                    <button
+                        id="new-game-button"
+                        class="start-button"
+                        type="button"
                     >
-                    <input
-                        id="fen-input"
-                        class="field__input field__input--mono"
-                        type="text"
-                        placeholder="Leave empty for standard start"
-                    />
+                        New game
+                    </button>
                 </div>
-
-                <button id="start-game" class="start-button" type="button">
-                    Start game
-                </button>
             </aside>
             <main class="stage">
                 <div id="board" class="board"></div>

@@ -12,6 +12,7 @@ import { pieces } from "./constants";
 import {
   renderEngineInfo,
   renderGameOver,
+  renderThinking,
   resetEngineInfo,
 } from "./engineInfo";
 import { renderMoves } from "./moves";
@@ -24,6 +25,7 @@ const squareDivs: HTMLDivElement[] = new Array(64);
 
 let movetime = 1000;
 let selectedSide: Color = Color.White;
+let gameStarted = false;
 
 const worker = new Worker(new URL("./engineWorker.ts", import.meta.url), {
   type: "module",
@@ -60,6 +62,10 @@ worker.onmessage = (event) => {
 };
 
 function onSquareClick(square: number) {
+  if (!gameStarted) {
+    return;
+  }
+
   if (selectedSquare === null) {
     selectSquare(square);
   } else if (selectedSquare != null) {
@@ -111,6 +117,7 @@ function sendMove(move: Move) {
   worker.postMessage({ type: "getBoard" });
 
   worker.postMessage({ type: "go", movetime });
+  renderThinking();
 }
 
 // Select and highlight legal moves on the board
@@ -166,6 +173,7 @@ startGameButton?.addEventListener("click", () => {
 
   moveList.length = 0;
   selectedSquare = null;
+  gameStarted = true;
   resetEngineInfo();
 
   worker.postMessage({ type: "newGame", fen });
@@ -173,5 +181,50 @@ startGameButton?.addEventListener("click", () => {
 
   if (selectedSide === Color.Black) {
     worker.postMessage({ type: "go", movetime });
+    renderThinking();
   }
+
+  showSettingsSummary();
 });
+
+const newGameButton = document.getElementById("new-game-button");
+newGameButton?.addEventListener("click", () => {
+  gameStarted = false;
+  moveList.length = 0;
+  selectedSquare = null;
+  resetEngineInfo();
+
+  worker.postMessage({ type: "newGame", fen: "" });
+  worker.postMessage({ type: "getBoard" });
+
+  showSettingsForm();
+});
+
+function showSettingsSummary() {
+  const settingsForm = document.getElementById("settings-form");
+  const settingsSummary = document.getElementById("settings-summary");
+  const settingsSummaryText = document.getElementById("settings-summary-text");
+
+  if (settingsForm != null) {
+    settingsForm.hidden = true;
+  }
+  if (settingsSummary != null) {
+    settingsSummary.hidden = false;
+  }
+  if (settingsSummaryText != null) {
+    const sideLabel = selectedSide === Color.White ? "White" : "Black";
+    settingsSummaryText.textContent = `Playing ${sideLabel} · ${movetime}ms`;
+  }
+}
+
+function showSettingsForm() {
+  const settingsForm = document.getElementById("settings-form");
+  const settingsSummary = document.getElementById("settings-summary");
+
+  if (settingsForm != null) {
+    settingsForm.hidden = false;
+  }
+  if (settingsSummary != null) {
+    settingsSummary.hidden = true;
+  }
+}
