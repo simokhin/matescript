@@ -36,5 +36,9 @@ self.onmessage = (event: MessageEvent) => {
         move: moveToNotation(result.bestMove),
       });
     }
+  } else if (data.type === "getBoard") {
+    const board = position.board;
+
+    self.postMessage({ type: "board", board });
   }
 };

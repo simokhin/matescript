@@ -1,0 +1,67 @@
+:root {
+    --color-bg: #0e1116;
+    --color-panel-bg: #171b21;
+    --color-text: #edebe6;
+    --color-square-light: #e8e4dc;
+    --color-square-dark: #3a4048;
+    --color-accent: #d9782d;
+
+    --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
+}
+
+body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-ui);
+}
+
+#app {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    height: 100vh;
+}
+
+.panel--settings {
+    background-color: var(--color-panel-bg);
+    padding: 2rem;
+}
+
+.panel--moves {
+    background-color: var(--color-panel-bg);
+    padding: 2rem;
+}
+
+.stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+}
+
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square img {
+    width: 90%;
+    height: 90%;
+}
+
+.square--light {
+    background-color: var(--color-square-light);
+}
+
+.square--dark {
+    background-color: var(--color-square-dark);
+}

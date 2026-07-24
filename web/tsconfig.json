@@ -2,7 +2,7 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "WebWorker"],
-    "types": [],
+    "types": ["vite/client"],
   },
   "include": ["."],
   "exclude": [],
