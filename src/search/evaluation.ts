@@ -60,6 +60,9 @@ export function evaluate(position: Position): number {
   evaluation += pawnStructureScore(pawnsCount, color);
   evaluation -= pawnStructureScore(pawnsCount, oppositeColor(color));
 
+  evaluation += (kingShieldScore(position, color) * phase) / 24;
+  evaluation -= (kingShieldScore(position, oppositeColor(color)) * phase) / 24;
+
   return evaluation;
 }
 
@@ -130,6 +133,30 @@ function countPawnsByFile(position: Position): Record<Color, number[]> {
   });
 
   return pawnsCount;
+}
+
+function kingShieldScore(position: Position, color: Color): number {
+  const kingSquare = position.kingSquares[color];
+  const file = kingSquare % 8;
+  const rank = Math.floor(kingSquare / 8);
+  const shieldRank = color === Color.White ? rank + 1 : rank - 1;
+
+  let score = 0;
+
+  for (let f = file - 1; f <= file + 1; f++) {
+    if (f < 0 || f > 7) {
+      continue;
+    }
+
+    const targetSquare = shieldRank * 8 + f;
+    const piece = position.board[targetSquare];
+
+    if (piece?.color === color && piece.pieceType === PieceType.Pawn) {
+      score += 10;
+    }
+  }
+
+  return score;
 }
 
 function pawnStructureScore(
