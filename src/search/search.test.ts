@@ -8,6 +8,6 @@ test("negamax test", () => {
   let gameHisrory = [];
   gameHisrory.push(pos.hash);
 
-  const evaluation = search(pos, 2, -Infinity, Infinity, gameHisrory);
+  const evaluation = search(pos, 2, -Infinity, Infinity, gameHisrory, true);
   expect(evaluation).toBe(1_000_001);
 });

@@ -70,10 +70,14 @@ export function findBestMove(
         if (repeat) {
           evaluation = 0;
         } else {
-          evaluation = -search(newPos, depth - 1, -beta, -alpha, [
-            ...history,
-            newPos.hash,
-          ]);
+          evaluation = -search(
+            newPos,
+            depth - 1,
+            -beta,
+            -alpha,
+            [...history, newPos.hash],
+            true,
+          );
         }
 
         if (evaluation > alpha) {
@@ -116,6 +120,7 @@ export function search(
   alpha: number,
   beta: number,
   history: number[],
+  allowNullMove: boolean,
 ) {
   searchState.nodes += 1;
 
@@ -138,7 +143,7 @@ export function search(
   }
 
   // Null-move pruning
-  if (canNullMove(position, depth)) {
+  if (allowNullMove && canNullMove(position, depth)) {
     const R = 2;
     const nullPos = makeNullMove(position);
     const nullMoveScore = -search(
@@ -147,6 +152,7 @@ export function search(
       -beta,
       -beta + 1,
       history,
+      false,
     );
 
     if (nullMoveScore >= beta) {
@@ -183,10 +189,14 @@ export function search(
       if (repeat) {
         evaluation = 0;
       } else {
-        evaluation = -search(newPos, depth - 1, -beta, -alpha, [
-          ...history,
-          newPos.hash,
-        ]);
+        evaluation = -search(
+          newPos,
+          depth - 1,
+          -beta,
+          -alpha,
+          [...history, newPos.hash],
+          true,
+        );
       }
 
       if (evaluation > bestValue) {
