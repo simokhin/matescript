@@ -1,6 +1,6 @@
-# TypeScript Chess Engine
+# MateScript
 
-A UCI-compatible chess engine written from scratch in TypeScript, plus a browser UI for playing against it. Built as a learning project — both TypeScript itself and classical chess engine algorithms (search, evaluation).
+A UCI-compatible chess engine written from scratch in TypeScript. Also ships with a browser UI for playing against it directly.
 
 ## Requirements
 
@@ -12,14 +12,6 @@ A UCI-compatible chess engine written from scratch in TypeScript, plus a browser
 bun install
 ```
 
-### Play in the browser
-
-```sh
-bun run dev
-```
-
-Starts a Vite dev server for the web UI (`web/`) — choose a side, time per move, and optionally a starting FEN, then play against the engine.
-
 ### Use as a UCI engine
 
 ```sh
@@ -29,12 +21,20 @@ bun run build
 
 Compiles a standalone binary implementing the [UCI protocol](https://www.chessprogramming.org/UCI), usable with any UCI-compatible GUI (Arena, cutechess, etc.) or directly via stdin/stdout.
 
+### Play in the browser
+
+```sh
+bun run dev
+```
+
+Starts a Vite dev server for the web UI (`web/`) — choose a side, time per move, and optionally a starting FEN, then play against the engine.
+
 ## Scripts
 
 | Command             | Description                                |
 | ------------------- | ------------------------------------------ |
-| `bun run dev`       | Web UI dev server                          |
 | `bun run build`     | Compile the UCI engine binary (`myengine`) |
+| `bun run dev`       | Web UI dev server                          |
 | `bun run build:web` | Production build of the web UI (`dist/`)   |
 | `bun run preview`   | Preview the production web build           |
 | `bun run test`      | Run the test suite                         |

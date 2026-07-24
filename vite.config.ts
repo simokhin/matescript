@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: "web",
-  base: "/tsengine/",
+  base: "/matescript/",
   build: {
     outDir: "../dist",
     emptyOutDir: true,

@@ -366,3 +366,30 @@ body {
 #new-game-button {
     padding: 0.4rem 1rem;
 }
+
+.site-title {
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+}
+
+.repo-link {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--color-highlight);
+    text-decoration: none;
+}
+
+.repo-link:hover {
+    color: var(--color-accent);
+}
+
+.repo-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}

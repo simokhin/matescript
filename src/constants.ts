@@ -1,7 +1,7 @@
 import { PieceType } from "./types";
 
 // General information
-export const ENGINE_NAME = "TypeScript Chess Engine";
+export const ENGINE_NAME = "MateScript";
 export const AUTHOR_NAME = "Nikita Simokhin";
 
 // Moves related constant
