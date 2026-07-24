@@ -97,7 +97,7 @@ for await (const line of console) {
         if (result.bestMove !== undefined) {
           const score = formatScore(result);
           console.log(
-            `info depth ${result.depth} nodes ${result.nodes} ${score}`,
+            `info depth ${result.depth} nodes ${result.nodes} score ${score}`,
           );
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
@@ -129,7 +129,7 @@ for await (const line of console) {
         if (result.bestMove !== undefined) {
           const score = formatScore(result);
           console.log(
-            `info depth ${result.depth} nodes ${result.nodes} ${score}`,
+            `info depth ${result.depth} nodes ${result.nodes} score ${score}`,
           );
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }

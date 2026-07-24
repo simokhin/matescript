@@ -5,7 +5,7 @@ import { makeLegalMove } from "../src/moves/makeMove";
 import { findBestMove } from "../src/search/search";
 import { type SearchParameters } from "../src/search/types";
 
-let position = parseFEN("8/P7/8/8/8/8/8/k6K w - - 0 1");
+let position = parseFEN(START_FEN);
 let gameHistory: number[] = [position.hash];
 
 self.onmessage = (event: MessageEvent) => {

@@ -13,6 +13,7 @@ import type { Move, Piece, Position } from "../src/types";
 import { pieces, sounds } from "./constants";
 
 let pos: Position;
+const moveList: string[] = [];
 
 const audioCache = {
   move: new Audio(sounds.move),
@@ -36,6 +37,7 @@ worker.onmessage = (event) => {
       boardDiv.innerHTML = "";
     }
 
+    // Board rendering
     for (let r = 7; r >= 0; r--) {
       for (let c = 0; c <= 7; c++) {
         let square = r * 8 + c;
@@ -63,6 +65,7 @@ worker.onmessage = (event) => {
 
             if (legalMoves.length === 1) {
               sendMove(legalMoves[0]!);
+              moveList.push(moveToNotation(legalMoves[0]!));
             } else if (legalMoves.length > 1) {
               const picker = document.getElementById("promotion-picker");
               if (picker != null) {
@@ -76,6 +79,7 @@ worker.onmessage = (event) => {
                   promotionPiece.addEventListener("click", () => {
                     picker.hidden = true;
                     sendMove(m);
+                    moveList.push(moveToNotation(m));
                   });
                   picker.appendChild(promotionPiece);
                 });
@@ -102,9 +106,24 @@ worker.onmessage = (event) => {
         }
       }
     }
+
+    // Moves rendering
+    let movesDiv = document.getElementById("moves");
+    if (movesDiv != null) {
+      movesDiv.innerHTML = "";
+    }
+    for (let i = 0; i < moveList.length; i += 2) {
+      const moveDiv = document.createElement("div");
+      moveDiv.textContent = `${i / 2 + 1}. ${moveList[i]} ${moveList[i + 1] ?? ""}`;
+      movesDiv?.appendChild(moveDiv);
+    }
+    if (movesDiv != null) {
+      movesDiv.scrollTop = movesDiv.scrollHeight;
+    }
   } else if (event.data.type === "bestmove") {
     // Play move's sound for engine moves
     const engineMove = notationToMove(event.data.move, pos);
+    moveList.push(event.data.move);
     const positionAfter = makeLegalMove(pos, engineMove);
     if (positionAfter != null) {
       playMoveSound(engineMove, positionAfter);
