@@ -8,6 +8,7 @@ import {
   ROOK_PST,
 } from "./pst";
 import { Color, PieceType, type Position } from "../types";
+import { oppositeColor } from "../position/board";
 
 export const pieceWeights: Record<PieceType, number> = {
   [PieceType.Rook]: 500,
@@ -53,6 +54,9 @@ export function evaluate(position: Position): number {
       }
     }
   });
+
+  evaluation += pawnStructureScore(position, color);
+  evaluation -= pawnStructureScore(position, oppositeColor(color));
 
   return evaluation;
 }
@@ -100,4 +104,53 @@ function getPstValue(
     // biome-ignore lint/style/noNonNullAssertion: square is always 0-63, and pieceSquareTables[pieceType] always has exactly 64 entries
     return pieceSquareTables[pieceType][square]!;
   }
+}
+
+function countPawnsByFile(position: Position): Record<Color, number[]> {
+  let pawnsCount: Record<Color, number[]> = {
+    [Color.White]: new Array(8).fill(0),
+    [Color.Black]: new Array(8).fill(0),
+  };
+
+  position.board.forEach((p, i) => {
+    let file = i % 8;
+
+    if (p?.pieceType === PieceType.Pawn) {
+      pawnsCount[p.color][file]! += 1;
+    }
+  });
+
+  return pawnsCount;
+}
+
+function pawnStructureScore(position: Position, color: Color): number {
+  let pawnsCount = countPawnsByFile(position);
+  let penalty = 0;
+
+  for (let i = 0; i <= 7; i++) {
+    if (pawnsCount[color][i]! > 1) {
+      penalty += -10;
+    }
+    if (
+      i === 0 &&
+      pawnsCount[color][i]! > 0 &&
+      pawnsCount[color][i + 1] === 0
+    ) {
+      penalty += -10;
+    } else if (
+      i === 7 &&
+      pawnsCount[color][i]! > 0 &&
+      pawnsCount[color][i - 1] === 0
+    ) {
+      penalty += -10;
+    } else if (
+      pawnsCount[color][i]! > 0 &&
+      pawnsCount[color][i - 1] === 0 &&
+      pawnsCount[color][i + 1] === 0
+    ) {
+      penalty += -10;
+    }
+  }
+
+  return penalty;
 }
