@@ -37,8 +37,8 @@ self.onmessage = (event: MessageEvent) => {
       });
     }
   } else if (data.type === "getBoard") {
-    const board = position.board;
+    const pos = position;
 
-    self.postMessage({ type: "board", board });
+    self.postMessage({ type: "position", pos });
   }
 };
