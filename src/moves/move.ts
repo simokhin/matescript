@@ -61,7 +61,7 @@ export function getMoveCapturePiece(move: Move): number {
   return (move >> 4) & ((1 << 3) - 1);
 }
 
-export function getMovePromotionPiece(move: Move): number {
+export function getMovePromotionPiece(move: Move): PieceType {
   return (move >> 1) & ((1 << 3) - 1);
 }
 

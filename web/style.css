@@ -6,7 +6,8 @@
     --color-square-dark: #3a4048;
     --color-accent: #d9782d;
     --color-highlight: #5b7a8c;
-    --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --color-picker-bg:
+        #4a5058 --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
 }
 
@@ -34,6 +35,7 @@ body {
 }
 
 .stage {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -78,4 +80,35 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.promotion-picker {
+    position: absolute;
+    display: flex;
+    gap: 4px;
+    background-color: var(--color-picker-bg);
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    border: 1px solid var(--color-highlight);
+}
+
+.promotion-picker[hidden] {
+    display: none;
+}
+
+.promotion-picker img {
+    box-sizing: border-box;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background-color 0.15s ease;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+.promotion-picker img:hover {
+    background-color: var(--color-panel-bg);
+    background-color: color-mix(in srgb, var(--color-bg) 25%, transparent);
 }

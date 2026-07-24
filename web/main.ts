@@ -61,21 +61,25 @@ worker.onmessage = (event) => {
               (m) => makeLegalMove(pos, m) != null,
             );
 
-            if (legalMoves.length > 0) {
-              selectedSquare = null;
-              let move = moveToNotation(legalMoves[0]!);
-
-              worker.postMessage({ type: "move", move: move });
-
-              // Play move sound
-              let newPos = makeLegalMove(pos, legalMoves[0]!);
-              playMoveSound(legalMoves[0]!, newPos!);
-
-              // Get an updated board
-              worker.postMessage({ type: "getBoard" });
-
-              // Get engine's move
-              worker.postMessage({ type: "go", movetime: 1000 });
+            if (legalMoves.length === 1) {
+              sendMove(legalMoves[0]!);
+            } else if (legalMoves.length > 1) {
+              const picker = document.getElementById("promotion-picker");
+              if (picker != null) {
+                picker.innerHTML = "";
+                picker.hidden = false;
+                // Show promotion moves
+                legalMoves.forEach((m) => {
+                  const promotionPiece = document.createElement("img");
+                  promotionPiece.src =
+                    pieces[pos.sideToMove][getMovePromotionPiece(m)];
+                  promotionPiece.addEventListener("click", () => {
+                    picker.hidden = true;
+                    sendMove(m);
+                  });
+                  picker.appendChild(promotionPiece);
+                });
+              }
             } else if (legalMoves.length === 0) {
               selectSquare(square);
             }
@@ -113,6 +117,19 @@ worker.onmessage = (event) => {
 let selectedSquare: number | null = null;
 
 const squareDivs: HTMLDivElement[] = new Array(64);
+
+function sendMove(move: Move) {
+  selectedSquare = null;
+
+  worker.postMessage({ type: "move", move: moveToNotation(move) });
+
+  const newPos = makeLegalMove(pos, move);
+  playMoveSound(move, newPos!);
+
+  worker.postMessage({ type: "getBoard" });
+
+  worker.postMessage({ type: "go", movetime: 1000 });
+}
 
 // Select and highlight legal moves on the board
 function selectSquare(square: number) {
