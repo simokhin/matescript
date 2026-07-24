@@ -307,3 +307,10 @@ body {
     outline: 2px solid var(--color-text);
     outline-offset: 2px;
 }
+
+.engine-info__gameover {
+    color: var(--color-accent);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 600;
+}

@@ -9,7 +9,11 @@ import { moveToNotation, notationToMove } from "../src/notation";
 import { Color, type Move, type Position } from "../src/types";
 import { clearHighlights, highlightSquares, renderBoard } from "./board";
 import { pieces } from "./constants";
-import { renderEngineInfo, resetEngineInfo } from "./engineInfo";
+import {
+  renderEngineInfo,
+  renderGameOver,
+  resetEngineInfo,
+} from "./engineInfo";
 import { renderMoves } from "./moves";
 import { playMoveSound } from "./sound";
 
@@ -31,7 +35,7 @@ worker.onmessage = (event) => {
   if (event.data.type === "position") {
     pos = event.data.pos;
 
-    renderBoard(pos, squareDivs, onSquareClick);
+    renderBoard(pos, squareDivs, onSquareClick, selectedSide === Color.Black);
     renderMoves(moveList);
   } else if (event.data.type === "bestmove") {
     renderEngineInfo(event.data.depth, event.data.nodes, event.data.score);
@@ -45,6 +49,13 @@ worker.onmessage = (event) => {
     }
 
     worker.postMessage({ type: "getBoard" });
+  } else if (event.data.type === "gameOver") {
+    const message =
+      event.data.reason === "checkmate"
+        ? `Checkmate — ${event.data.winner === Color.White ? "White" : "Black"} wins`
+        : "Stalemate — draw";
+
+    renderGameOver(message);
   }
 };
 

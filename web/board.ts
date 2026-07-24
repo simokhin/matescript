@@ -5,14 +5,17 @@ export function renderBoard(
   pos: Position,
   squareDivs: HTMLDivElement[],
   onSquareClick: (square: number) => void,
+  flipped: boolean,
 ): void {
   const boardDiv = document.getElementById("board");
   if (boardDiv != null) {
     boardDiv.innerHTML = "";
   }
 
-  for (let r = 7; r >= 0; r--) {
-    for (let c = 0; c <= 7; c++) {
+  for (let visualRow = 0; visualRow <= 7; visualRow++) {
+    for (let visualCol = 0; visualCol <= 7; visualCol++) {
+      const r = flipped ? visualRow : 7 - visualRow;
+      const c = flipped ? 7 - visualCol : visualCol;
       const square = r * 8 + c;
 
       const squareDiv = document.createElement("div");

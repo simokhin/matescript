@@ -25,6 +25,20 @@ export function resetEngineInfo(): void {
   engineInfoDiv.appendChild(placeholder);
 }
 
+export function renderGameOver(message: string): void {
+  const engineInfoDiv = document.getElementById("engine-info");
+  if (engineInfoDiv == null) {
+    return;
+  }
+
+  engineInfoDiv.innerHTML = "";
+
+  const row = document.createElement("div");
+  row.className = "engine-info__gameover";
+  row.textContent = message;
+  engineInfoDiv.appendChild(row);
+}
+
 export function renderEngineInfo(
   depth: number,
   nodes: number,
