@@ -3,8 +3,9 @@ import {
   getMoveFrom,
   getMoveIsCapture,
 } from "../moves/move";
+import { isSquareAttacked, oppositeColor } from "../position/board";
 import type { Move, PieceType, Position } from "../types";
-import { pieceWeights } from "./evaluation";
+import { calculatePhase, pieceWeights } from "./evaluation";
 import { MATE_SCORE } from "./search";
 import type { SearchResult } from "./types";
 
@@ -43,4 +44,22 @@ export function formatScore(result: SearchResult): string {
     return `mate ${mateValue}`;
   }
   return `cp ${result.score}`;
+}
+
+export function canNullMove(position: Position, depth: number): boolean {
+  if (
+    isSquareAttacked(
+      position,
+      position.kingSquares[position.sideToMove],
+      oppositeColor(position.sideToMove),
+    )
+  ) {
+    return false;
+  } else if (calculatePhase(position) === 0) {
+    return false;
+  } else if (depth < 3) {
+    return false;
+  }
+
+  return true;
 }

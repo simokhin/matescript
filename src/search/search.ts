@@ -2,12 +2,13 @@ import { isSquareAttacked, oppositeColor } from "../position/board";
 import { generateAllMoves } from "../moves/movegen";
 import type { Move, Position } from "../types";
 import {
+  canNullMove,
   getMoveScore,
   moveScoreWithKiller,
   SearchTimeoutError,
 } from "./searchHelpers";
 import type { SearchParameters, SearchResult, SearchState } from "./types";
-import { makeLegalMove } from "../moves/makeMove";
+import { makeLegalMove, makeNullMove } from "../moves/makeMove";
 import { quiescence } from "./quiescence";
 import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
 import { getMoveIsCapture } from "../moves/move";
@@ -136,6 +137,24 @@ export function search(
     return probeResult;
   }
 
+  // Null-move pruning
+  if (canNullMove(position, depth)) {
+    const R = 2;
+    const nullPos = makeNullMove(position);
+    const nullMoveScore = -search(
+      nullPos,
+      depth - 1 - R,
+      -beta,
+      -beta + 1,
+      history,
+    );
+
+    if (nullMoveScore >= beta) {
+      return beta;
+    }
+  }
+
+  // Killer moves
   if (!killerMoves[depth]) {
     killerMoves[depth] = [undefined, undefined];
   }

@@ -63,7 +63,7 @@ export function evaluate(position: Position): number {
   return evaluation;
 }
 
-function calculatePhase(position: Position): number {
+export function calculatePhase(position: Position): number {
   let score = 0;
 
   position.board.forEach((p) => {

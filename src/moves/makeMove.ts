@@ -166,3 +166,18 @@ export function makeMove(position: Position, move: Move): Position {
 
   return newBoard;
 }
+
+export function makeNullMove(position: Position): Position {
+  const newPosition = {
+    ...position,
+    board: [...position.board],
+    castleRights: { ...position.castleRights },
+    kingSquares: { ...position.kingSquares },
+  };
+
+  newPosition.sideToMove = oppositeColor(position.sideToMove);
+  newPosition.enPassantSquare = null;
+  newPosition.hash = computeHash(newPosition);
+
+  return newPosition;
+}
