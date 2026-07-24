@@ -136,7 +136,7 @@ body {
     gap: 0.35rem;
     font-family: var(--font-mono);
     font-size: 0.9rem;
-    max-height: 70vh;
+    max-height: 40vh;
     overflow-y: auto;
     scrollbar-width: none;
 }
@@ -145,14 +145,49 @@ body {
     display: none;
 }
 
-#moves div {
+.move-row {
     padding: 0.15rem 0;
     color: var(--color-text);
     opacity: 0.7;
 }
 
-#moves div:last-child {
+.move-row:last-child {
     color: var(--color-accent);
     opacity: 1;
     font-weight: 600;
+}
+
+.move-number {
+    color: var(--color-highlight);
+    margin-right: 0.4rem;
+}
+
+.move-white {
+    margin-right: 0.5rem;
+}
+
+.moves-empty,
+.engine-info__placeholder {
+    padding: 0.15rem 0;
+    color: var(--color-text);
+    opacity: 0.4;
+    font-style: italic;
+}
+
+#engine-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+.engine-info__label {
+    color: var(--color-highlight);
+    opacity: 0.7;
+}
+
+.engine-info__value {
+    color: var(--color-text);
+    margin-left: 0.5rem;
 }

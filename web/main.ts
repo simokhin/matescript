@@ -9,6 +9,7 @@ import {
 import { generateAllMoves } from "../src/moves/movegen";
 import { moveToNotation, notationToMove } from "../src/notation";
 import { isSquareAttacked, oppositeColor } from "../src/position/board";
+import { MATE_SCORE } from "../src/search/search";
 import type { Move, Piece, Position } from "../src/types";
 import { pieces, sounds } from "./constants";
 
@@ -111,16 +112,67 @@ worker.onmessage = (event) => {
     let movesDiv = document.getElementById("moves");
     if (movesDiv != null) {
       movesDiv.innerHTML = "";
-    }
-    for (let i = 0; i < moveList.length; i += 2) {
-      const moveDiv = document.createElement("div");
-      moveDiv.textContent = `${i / 2 + 1}. ${moveList[i]} ${moveList[i + 1] ?? ""}`;
-      movesDiv?.appendChild(moveDiv);
-    }
-    if (movesDiv != null) {
+
+      if (moveList.length === 0) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "moves-empty";
+        emptyDiv.textContent = "No moves yet";
+        movesDiv.appendChild(emptyDiv);
+      } else {
+        for (let i = 0; i < moveList.length; i += 2) {
+          const moveDiv = document.createElement("div");
+          moveDiv.className = "move-row";
+
+          const numberSpan = document.createElement("span");
+          numberSpan.className = "move-number";
+          numberSpan.textContent = `${i / 2 + 1}.`;
+
+          const whiteSpan = document.createElement("span");
+          whiteSpan.className = "move-white";
+          whiteSpan.textContent = moveList[i] ?? "";
+
+          const blackSpan = document.createElement("span");
+          blackSpan.className = "move-black";
+          blackSpan.textContent = moveList[i + 1] ?? "";
+
+          moveDiv.appendChild(numberSpan);
+          moveDiv.appendChild(whiteSpan);
+          moveDiv.appendChild(blackSpan);
+          movesDiv.appendChild(moveDiv);
+        }
+      }
+
       movesDiv.scrollTop = movesDiv.scrollHeight;
     }
   } else if (event.data.type === "bestmove") {
+    // Engine telemetry
+    const engineInfoDiv = document.getElementById("engine-info");
+    if (engineInfoDiv != null) {
+      engineInfoDiv.innerHTML = "";
+
+      const rows: [string, string][] = [
+        ["Depth", String(event.data.depth)],
+        ["Nodes", event.data.nodes.toLocaleString()],
+        ["Eval", formatEval(event.data.score, event.data.depth)],
+      ];
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement("div");
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "engine-info__label";
+        labelSpan.textContent = label;
+
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "engine-info__value";
+        valueSpan.textContent = value;
+
+        row.appendChild(labelSpan);
+        row.appendChild(valueSpan);
+        engineInfoDiv.appendChild(row);
+      });
+    }
+
     // Play move's sound for engine moves
     const engineMove = notationToMove(event.data.move, pos);
     moveList.push(event.data.move);
@@ -164,6 +216,17 @@ function selectSquare(square: number) {
   for (const m of legalMoves) {
     squareDivs[getMoveTo(m)]?.classList.add("square--highlight");
   }
+}
+
+function formatEval(score: number, depth: number): string {
+  if (Math.abs(score) >= MATE_SCORE) {
+    const pliesToMate = depth - (Math.abs(score) - MATE_SCORE);
+    const mateValue = score > 0 ? pliesToMate : -pliesToMate;
+    return mateValue >= 0 ? `M${mateValue}` : `-M${Math.abs(mateValue)}`;
+  }
+
+  const pawns = score / 100;
+  return `${pawns >= 0 ? "+" : ""}${pawns.toFixed(2)}`;
 }
 
 function playMoveSound(move: Move, positionAfter: Position) {

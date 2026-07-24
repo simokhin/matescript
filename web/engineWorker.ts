@@ -34,6 +34,9 @@ self.onmessage = (event: MessageEvent) => {
       self.postMessage({
         type: "bestmove",
         move: moveToNotation(result.bestMove),
+        depth: result.depth,
+        nodes: result.nodes,
+        score: result.score,
       });
     }
   } else if (data.type === "getBoard") {
