@@ -55,8 +55,9 @@ export function evaluate(position: Position): number {
     }
   });
 
-  evaluation += pawnStructureScore(position, color);
-  evaluation -= pawnStructureScore(position, oppositeColor(color));
+  const pawnsCount = countPawnsByFile(position);
+  evaluation += pawnStructureScore(pawnsCount, color);
+  evaluation -= pawnStructureScore(pawnsCount, oppositeColor(color));
 
   return evaluation;
 }
@@ -123,8 +124,10 @@ function countPawnsByFile(position: Position): Record<Color, number[]> {
   return pawnsCount;
 }
 
-function pawnStructureScore(position: Position, color: Color): number {
-  let pawnsCount = countPawnsByFile(position);
+function pawnStructureScore(
+  pawnsCount: Record<Color, number[]>,
+  color: Color,
+): number {
   let penalty = 0;
 
   for (let i = 0; i <= 7; i++) {
