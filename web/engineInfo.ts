@@ -11,6 +11,20 @@ export function formatEval(score: number, depth: number): string {
   return `${pawns >= 0 ? "+" : ""}${pawns.toFixed(2)}`;
 }
 
+export function resetEngineInfo(): void {
+  const engineInfoDiv = document.getElementById("engine-info");
+  if (engineInfoDiv == null) {
+    return;
+  }
+
+  engineInfoDiv.innerHTML = "";
+
+  const placeholder = document.createElement("div");
+  placeholder.className = "engine-info__placeholder";
+  placeholder.textContent = "Waiting for a move…";
+  engineInfoDiv.appendChild(placeholder);
+}
+
 export function renderEngineInfo(
   depth: number,
   nodes: number,

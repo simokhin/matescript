@@ -1,9 +1,9 @@
 import { START_FEN } from "../src/constants";
-import { parseFEN } from "../src/position/fen";
-import { moveToNotation, notationToMove } from "../src/notation";
 import { makeLegalMove } from "../src/moves/makeMove";
+import { moveToNotation, notationToMove } from "../src/notation";
+import { parseFEN } from "../src/position/fen";
 import { findBestMove } from "../src/search/search";
-import { type SearchParameters } from "../src/search/types";
+import type { SearchParameters } from "../src/search/types";
 
 let position = parseFEN(START_FEN);
 let gameHistory: number[] = [position.hash];
@@ -11,7 +11,10 @@ let gameHistory: number[] = [position.hash];
 self.onmessage = (event: MessageEvent) => {
   const data = event.data;
 
-  if (data.type === "move") {
+  if (data.type === "newGame") {
+    position = parseFEN(data.fen || START_FEN);
+    gameHistory = [position.hash];
+  } else if (data.type === "move") {
     const m = notationToMove(data.move, position);
     const newPos = makeLegalMove(position, m);
     if (newPos != null) {

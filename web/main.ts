@@ -6,10 +6,10 @@ import {
 } from "../src/moves/move";
 import { generateAllMoves } from "../src/moves/movegen";
 import { moveToNotation, notationToMove } from "../src/notation";
-import type { Move, Position } from "../src/types";
+import { Color, type Move, type Position } from "../src/types";
 import { clearHighlights, highlightSquares, renderBoard } from "./board";
 import { pieces } from "./constants";
-import { renderEngineInfo } from "./engineInfo";
+import { renderEngineInfo, resetEngineInfo } from "./engineInfo";
 import { renderMoves } from "./moves";
 import { playMoveSound } from "./sound";
 
@@ -17,6 +17,9 @@ let pos: Position;
 const moveList: string[] = [];
 let selectedSquare: number | null = null;
 const squareDivs: HTMLDivElement[] = new Array(64);
+
+let movetime = 1000;
+let selectedSide: Color = Color.White;
 
 const worker = new Worker(new URL("./engineWorker.ts", import.meta.url), {
   type: "module",
@@ -96,7 +99,7 @@ function sendMove(move: Move) {
 
   worker.postMessage({ type: "getBoard" });
 
-  worker.postMessage({ type: "go", movetime: 1000 });
+  worker.postMessage({ type: "go", movetime });
 }
 
 // Select and highlight legal moves on the board
@@ -115,3 +118,49 @@ function selectSquare(square: number) {
     legalMoves.map((m) => getMoveTo(m)),
   );
 }
+
+// Settings panel
+const sideOptions =
+  document.querySelectorAll<HTMLButtonElement>(".side-option");
+
+sideOptions.forEach((option) => {
+  option.addEventListener("click", () => {
+    sideOptions.forEach((other) => {
+      other.classList.remove("is-selected");
+      other.setAttribute("aria-pressed", "false");
+    });
+
+    option.classList.add("is-selected");
+    option.setAttribute("aria-pressed", "true");
+
+    selectedSide = option.dataset.side === "black" ? Color.Black : Color.White;
+  });
+});
+
+const startGameButton = document.getElementById("start-game");
+startGameButton?.addEventListener("click", () => {
+  const fenInput = document.getElementById("fen-input");
+  const movetimeInput = document.getElementById("movetime-input");
+
+  const fen = fenInput instanceof HTMLInputElement ? fenInput.value.trim() : "";
+  const parsedMovetime =
+    movetimeInput instanceof HTMLInputElement
+      ? Number(movetimeInput.value)
+      : Number.NaN;
+
+  movetime =
+    Number.isFinite(parsedMovetime) && parsedMovetime > 0
+      ? parsedMovetime
+      : 1000;
+
+  moveList.length = 0;
+  selectedSquare = null;
+  resetEngineInfo();
+
+  worker.postMessage({ type: "newGame", fen });
+  worker.postMessage({ type: "getBoard" });
+
+  if (selectedSide === Color.Black) {
+    worker.postMessage({ type: "go", movetime });
+  }
+});
