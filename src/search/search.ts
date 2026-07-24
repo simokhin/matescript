@@ -1,11 +1,16 @@
 import { isSquareAttacked, oppositeColor } from "../position/board";
 import { generateAllMoves } from "../moves/movegen";
 import type { Move, Position } from "../types";
-import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
+import {
+  getMoveScore,
+  moveScoreWithKiller,
+  SearchTimeoutError,
+} from "./searchHelpers";
 import type { SearchParameters, SearchResult, SearchState } from "./types";
 import { makeLegalMove } from "../moves/makeMove";
 import { quiescence } from "./quiescence";
 import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
+import { getMoveIsCapture } from "../moves/move";
 
 export const MATE_SCORE = 1_000_000;
 
@@ -13,6 +18,8 @@ export const searchState: SearchState = {
   deadline: 0,
   nodes: 0,
 };
+
+let killerMoves: (Move | undefined)[][] = [];
 
 export function findBestMove(
   position: Position,
@@ -129,11 +136,19 @@ export function search(
     return probeResult;
   }
 
+  if (!killerMoves[depth]) {
+    killerMoves[depth] = [undefined, undefined];
+  }
+
   let bestValue = -Infinity;
   let bestMove: Move | undefined = undefined;
 
   const moves = generateAllMoves(position);
-  moves.sort((a, b) => getMoveScore(b, position) - getMoveScore(a, position)); // MVV-LVA
+  moves.sort(
+    (a, b) =>
+      moveScoreWithKiller(b, position, killerMoves[depth]!) -
+      moveScoreWithKiller(a, position, killerMoves[depth]!),
+  ); // MVV-LVA
 
   const legalMoves: Move[] = [];
 
@@ -161,6 +176,17 @@ export function search(
         bestMove = move;
       }
       if (alpha >= beta) {
+        if (!getMoveIsCapture(move)) {
+          if (
+            killerMoves[depth][0] === move ||
+            killerMoves[depth][1] === move
+          ) {
+            break;
+          } else {
+            killerMoves[depth][1] = killerMoves[depth][0];
+            killerMoves[depth][0] = move;
+          }
+        }
         break;
       }
     }

@@ -10,6 +10,18 @@ import type { SearchResult } from "./types";
 
 export class SearchTimeoutError extends Error {}
 
+export function moveScoreWithKiller(
+  move: Move,
+  position: Position,
+  killers: (Move | undefined)[],
+): number {
+  let score = getMoveScore(move, position);
+  if (move === killers[0] || move === killers[1]) {
+    score += 50;
+  }
+  return score;
+}
+
 export function getMoveScore(move: Move, position: Position): number {
   let score = 0;
 
