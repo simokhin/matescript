@@ -7,7 +7,12 @@ import {
 import { generateAllMoves } from "../src/moves/movegen";
 import { moveToNotation, notationToMove } from "../src/notation";
 import { Color, type Move, type Position } from "../src/types";
-import { clearHighlights, highlightSquares, renderBoard } from "./board";
+import {
+  clearHighlights,
+  highlightSquares,
+  type LastMove,
+  renderBoard,
+} from "./board";
 import { pieces } from "./constants";
 import {
   renderEngineInfo,
@@ -26,6 +31,7 @@ const squareDivs: HTMLDivElement[] = new Array(64);
 let movetime = 1000;
 let selectedSide: Color = Color.White;
 let gameStarted = false;
+let lastMove: LastMove | null = null;
 
 const worker = new Worker(new URL("./engineWorker.ts", import.meta.url), {
   type: "module",
@@ -37,13 +43,20 @@ worker.onmessage = (event) => {
   if (event.data.type === "position") {
     pos = event.data.pos;
 
-    renderBoard(pos, squareDivs, onSquareClick, selectedSide === Color.Black);
+    renderBoard(
+      pos,
+      squareDivs,
+      onSquareClick,
+      selectedSide === Color.Black,
+      lastMove,
+    );
     renderMoves(moveList);
   } else if (event.data.type === "bestmove") {
     renderEngineInfo(event.data.depth, event.data.nodes, event.data.score);
 
     // Play move's sound for engine moves
     const engineMove = notationToMove(event.data.move, pos);
+    lastMove = { from: getMoveFrom(engineMove), to: getMoveTo(engineMove) };
     moveList.push(event.data.move);
     const positionAfter = makeLegalMove(pos, engineMove);
     if (positionAfter != null) {
@@ -108,6 +121,7 @@ function onSquareClick(square: number) {
 
 function sendMove(move: Move) {
   selectedSquare = null;
+  lastMove = { from: getMoveFrom(move), to: getMoveTo(move) };
 
   worker.postMessage({ type: "move", move: moveToNotation(move) });
 
@@ -173,6 +187,7 @@ startGameButton?.addEventListener("click", () => {
 
   moveList.length = 0;
   selectedSquare = null;
+  lastMove = null;
   gameStarted = true;
   resetEngineInfo();
 
@@ -192,6 +207,7 @@ newGameButton?.addEventListener("click", () => {
   gameStarted = false;
   moveList.length = 0;
   selectedSquare = null;
+  lastMove = null;
   resetEngineInfo();
 
   worker.postMessage({ type: "newGame", fen: "" });

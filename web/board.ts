@@ -1,11 +1,14 @@
 import type { Piece, Position } from "../src/types";
 import { pieces } from "./constants";
 
+export type LastMove = { from: number; to: number };
+
 export function renderBoard(
   pos: Position,
   squareDivs: HTMLDivElement[],
   onSquareClick: (square: number) => void,
   flipped: boolean,
+  lastMove: LastMove | null,
 ): void {
   const boardDiv = document.getElementById("board");
   if (boardDiv != null) {
@@ -27,6 +30,13 @@ export function renderBoard(
         squareDiv.classList.add("square", "square--dark");
       } else {
         squareDiv.classList.add("square", "square--light");
+      }
+
+      if (
+        lastMove != null &&
+        (square === lastMove.from || square === lastMove.to)
+      ) {
+        squareDiv.classList.add("square--lastmove");
       }
 
       boardDiv?.appendChild(squareDiv);
