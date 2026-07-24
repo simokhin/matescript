@@ -20,6 +20,7 @@ export function findBestMove(
   history: number[],
 ): SearchResult {
   let bestMove: Move | undefined;
+  let bestScore: number | undefined;
 
   searchState.deadline = 0;
   searchState.nodes = 0;
@@ -78,6 +79,8 @@ export function findBestMove(
           bestMove: bestMove,
           nodes: searchState.nodes,
           depth: depth - 1,
+          // biome-ignore lint/style/noNonNullAssertion: bestMove and bestScore are always committed together, and callers only read score after checking bestMove !== undefined
+          score: bestScore!,
         };
       } else {
         throw e;
@@ -85,6 +88,7 @@ export function findBestMove(
     }
 
     bestMove = currentBestMove;
+    bestScore = alpha;
 
     depth += 1;
   }
@@ -93,6 +97,8 @@ export function findBestMove(
     bestMove: bestMove,
     nodes: searchState.nodes,
     depth: depth - 1,
+    // biome-ignore lint/style/noNonNullAssertion: bestMove and bestScore are always committed together, and callers only read score after checking bestMove !== undefined
+    score: bestScore!,
   };
 }
 

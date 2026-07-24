@@ -5,6 +5,7 @@ import type { SearchParameters } from "./search/types";
 import { Color } from "./types";
 import { makeLegalMove } from "./moves/makeMove";
 import { moveToNotation, notationToMove } from "./notation";
+import { formatScore } from "./search/searchHelpers";
 
 const timeKeys: Record<Color, { time: string; inc: string }> = {
   [Color.White]: { time: "wtime", inc: "winc" },
@@ -94,7 +95,10 @@ for await (const line of console) {
 
         const result = findBestMove(position, depth, gameHistory);
         if (result.bestMove !== undefined) {
-          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
+          const score = formatScore(result);
+          console.log(
+            `info depth ${result.depth} nodes ${result.nodes} ${score}`,
+          );
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("movetime" in parsedGoParts) {
@@ -105,7 +109,10 @@ for await (const line of console) {
 
         const result = findBestMove(position, moveTime, gameHistory);
         if (result.bestMove !== undefined) {
-          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
+          const score = formatScore(result);
+          console.log(
+            `info depth ${result.depth} nodes ${result.nodes} ${score}`,
+          );
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       } else if ("wtime" in parsedGoParts) {
@@ -120,7 +127,10 @@ for await (const line of console) {
 
         const result = findBestMove(position, moveTime, gameHistory);
         if (result.bestMove !== undefined) {
-          console.log(`info depth ${result.depth} nodes ${result.nodes}`);
+          const score = formatScore(result);
+          console.log(
+            `info depth ${result.depth} nodes ${result.nodes} ${score}`,
+          );
           console.log(`bestmove ${moveToNotation(result.bestMove)}`);
         }
       }

@@ -13,4 +13,5 @@ export type SearchResult = {
   bestMove: Move | undefined;
   nodes: number;
   depth: number;
+  score: number;
 };
