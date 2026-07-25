@@ -32,6 +32,16 @@ export function storeTT(
   bestMoves[index] = bestMove;
 }
 
+export function probeTTMove(hash: number): Move | undefined {
+  const index = hash & (size - 1);
+
+  if (hashes[index] === hash) {
+    return bestMoves[index] as Move;
+  }
+
+  return undefined;
+}
+
 export function probeTT(
   hash: number,
   depth: number,

@@ -11,7 +11,14 @@ import {
 import type { SearchParameters, SearchResult, SearchState } from "./types";
 import { makeLegalMove, makeNullMove } from "../moves/makeMove";
 import { quiescence } from "./quiescence";
-import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
+import {
+  EXACT,
+  LOWERBOUND,
+  probeTT,
+  probeTTMove,
+  storeTT,
+  UPPERBOUND,
+} from "./tt";
 import { getMoveFrom, getMoveIsCapture, getMoveTo } from "../moves/move";
 
 export const MATE_SCORE = 1_000_000;
@@ -163,6 +170,8 @@ export function search(
     }
   }
 
+  const ttMove = probeTTMove(position.hash);
+
   // Killer moves
   if (!killerMoves[depth]) {
     killerMoves[depth] = [undefined, undefined];
@@ -179,12 +188,14 @@ export function search(
         position,
         killerMoves[depth]!,
         getHistoryScore(position.sideToMove, b),
+        ttMove,
       ) -
       moveScoreWithKiller(
         a,
         position,
         killerMoves[depth]!,
         getHistoryScore(position.sideToMove, a),
+        ttMove,
       ),
   ); // MVV-LVA
 

@@ -18,8 +18,12 @@ export function moveScoreWithKiller(
   position: Position,
   killers: (Move | undefined)[],
   historyScore: number,
+  ttMove: Move | undefined,
 ): number {
   let score = getMoveScore(move, position);
+  if (move === ttMove) {
+    score += 100_000;
+  }
   if (move === killers[0] || move === killers[1]) {
     score += 50;
   } else {
