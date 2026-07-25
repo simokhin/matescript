@@ -1,0 +1,14 @@
+Third-party assets
+
+web/assets/pieces/*.svg
+  "Merida" chess piece set, sourced from Wikimedia Commons.
+  Licensed separately from this project's code (commonly GPL / CC-BY-SA on
+  Commons) — verify the exact license on the original Commons file pages
+  before redistributing.
+
+web/assets/sounds/*.mp3
+  Sourced from Lichess (https://lichess.org), an open-source project
+  licensed under the GNU Affero General Public License (AGPL).
+
+These files are not covered by the MIT license in LICENSE — see the sources
+above for their actual terms.

@@ -11,10 +11,8 @@ import kingLight from "./assets/pieces/Chess_klt45.svg";
 import kingDark from "./assets/pieces/Chess_kdt45.svg";
 import pawnLight from "./assets/pieces/Chess_plt45.svg";
 import pawnDark from "./assets/pieces/Chess_pdt45.svg";
-import moveSound from "./assets/sounds/move.mp3";
-import captureSound from "./assets/sounds/capture.mp3";
-import checkSound from "./assets/sounds/check.mp3";
-import promotionSound from "./assets/sounds/promotion.mp3";
+import moveSound from "./assets/sounds/Move.mp3";
+import captureSound from "./assets/sounds/Capture.mp3";
 
 export const pieces: Record<Color, Record<PieceType, string>> = {
   [Color.White]: {
@@ -38,6 +36,6 @@ export const pieces: Record<Color, Record<PieceType, string>> = {
 export const sounds = {
   move: moveSound,
   capture: captureSound,
-  check: checkSound,
-  promotion: promotionSound,
+  check: moveSound,
+  promotion: moveSound,
 };

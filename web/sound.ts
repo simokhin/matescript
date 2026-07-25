@@ -4,12 +4,19 @@ import { isSquareAttacked, oppositeColor } from "../src/position/board";
 import type { Move, Position } from "../src/types";
 import { sounds } from "./constants";
 
+const moveAudio = new Audio(sounds.move);
+
 const audioCache = {
-  move: new Audio(sounds.move),
+  move: moveAudio,
   capture: new Audio(sounds.capture),
-  check: new Audio(sounds.check),
-  promotion: new Audio(sounds.promotion),
+  check: moveAudio,
+  promotion: moveAudio,
 };
+
+function playSound(audio: HTMLAudioElement): void {
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
 
 export function playMoveSound(move: Move, positionAfter: Position): void {
   if (
@@ -19,16 +26,12 @@ export function playMoveSound(move: Move, positionAfter: Position): void {
       oppositeColor(positionAfter.sideToMove),
     )
   ) {
-    audioCache.check.currentTime = 0;
-    audioCache.check.play();
+    playSound(audioCache.check);
   } else if (getMoveIsCapture(move)) {
-    audioCache.capture.currentTime = 0;
-    audioCache.capture.play();
+    playSound(audioCache.capture);
   } else if (getMovePromotionPiece(move) !== NOT_PROMOTION) {
-    audioCache.promotion.currentTime = 0;
-    audioCache.promotion.play();
+    playSound(audioCache.promotion);
   } else {
-    audioCache.move.currentTime = 0;
-    audioCache.move.play();
+    playSound(audioCache.move);
   }
 }
