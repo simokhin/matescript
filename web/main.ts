@@ -24,6 +24,7 @@ import {
   resetEngineInfo,
 } from "./engineInfo";
 import { renderMoves } from "./moves";
+import { moveToSAN } from "./notation";
 import { playMoveSound } from "./sound";
 
 const promotionPieceNames: Record<PieceType, string> = {
@@ -76,7 +77,7 @@ worker.onmessage = (event) => {
     // Play move's sound for engine moves
     const engineMove = notationToMove(event.data.move, pos);
     lastMove = { from: getMoveFrom(engineMove), to: getMoveTo(engineMove) };
-    moveList.push(event.data.move);
+    moveList.push(moveToSAN(engineMove, pos));
     const positionAfter = makeLegalMove(pos, engineMove);
     if (positionAfter != null) {
       playMoveSound(engineMove, positionAfter);
@@ -155,7 +156,7 @@ function onSquareClick(square: number) {
 
     if (legalMoves.length === 1) {
       sendMove(legalMoves[0]!);
-      moveList.push(moveToNotation(legalMoves[0]!));
+      moveList.push(moveToSAN(legalMoves[0]!, pos));
     } else if (legalMoves.length > 1) {
       const picker = document.getElementById("promotion-picker");
       if (picker != null) {
@@ -183,7 +184,7 @@ function onSquareClick(square: number) {
           option.addEventListener("click", () => {
             picker.hidden = true;
             sendMove(m);
-            moveList.push(moveToNotation(m));
+            moveList.push(moveToSAN(m, pos));
           });
           picker.appendChild(option);
         });

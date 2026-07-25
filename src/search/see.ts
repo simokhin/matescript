@@ -1,6 +1,12 @@
 import { kingDeltas } from "../moves/king";
 import { knightDeltas } from "../moves/knight";
-import { getMoveCapturePiece, getMoveFrom, getMoveTo } from "../moves/move";
+import { NOT_PROMOTION } from "../constants";
+import {
+  getMoveCapturePiece,
+  getMoveFrom,
+  getMovePromotionPiece,
+  getMoveTo,
+} from "../moves/move";
 import { bishopDeltas, rookDeltas } from "../moves/sliders";
 import { oppositeColor } from "../position/board";
 import { Color, PieceType, type Move, type Piece, type Position } from "../types";
@@ -243,12 +249,17 @@ export function evaluateSEE(position: Position, move: Move): number {
 
   // biome-ignore lint/style/noNonNullAssertion: getMoveFrom(move) always points at the square the moving piece came from, so it's never empty
   const attackerPiece = position.board[from]!;
-  const attackerValue = pieceWeights[attackerPiece.pieceType];
+  const promotionPiece = getMovePromotionPiece(move);
+  // If this move promotes, the piece that ends up on `to` (and that could be
+  // recaptured next) is the promoted piece, not the pawn that made the move.
+  const pieceTypeOnTarget =
+    promotionPiece !== NOT_PROMOTION ? promotionPiece : attackerPiece.pieceType;
+  const attackerValue = pieceWeights[pieceTypeOnTarget];
   const victimValue = pieceWeights[getMoveCapturePiece(move) as PieceType];
 
   const newBoard = [...position.board];
   newBoard[from] = null;
-  newBoard[to] = attackerPiece;
+  newBoard[to] = { color: attackerPiece.color, pieceType: pieceTypeOnTarget };
 
   const result = see(
     newBoard,
