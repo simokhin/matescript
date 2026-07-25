@@ -56,10 +56,16 @@ export function evaluate(position: Position): number {
     }
   });
 
+  // Penalty for doubled/isolated pawns
   const pawnsCount = countPawnsByFile(position);
   evaluation += pawnStructureScore(pawnsCount, color);
   evaluation -= pawnStructureScore(pawnsCount, oppositeColor(color));
 
+  // Bonus for rooks on open/semi-open files
+  evaluation += rookFileScore(position, pawnsCount, color);
+  evaluation -= rookFileScore(position, pawnsCount, oppositeColor(color));
+
+  // Bonus for a pawns shield above a king
   evaluation += (kingShieldScore(position, color) * phase) / 24;
   evaluation -= (kingShieldScore(position, oppositeColor(color)) * phase) / 24;
 
@@ -220,4 +226,25 @@ function isPassedPawn(
   }
 
   return true;
+}
+
+function rookFileScore(
+  position: Position,
+  pawnsCount: Record<Color, number[]>,
+  color: Color,
+) {
+  let score = 0;
+  position.board.forEach((p, i) => {
+    if (p?.pieceType === PieceType.Rook && p.color === color) {
+      const file = i % 8;
+      const ownPawns = pawnsCount[color][file];
+      const oppositePawns = pawnsCount[oppositeColor(color)][file];
+      if (ownPawns === 0 && oppositePawns === 0) {
+        score += 20;
+      } else if (ownPawns === 0) {
+        score += 10;
+      }
+    }
+  });
+  return score;
 }
