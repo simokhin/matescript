@@ -66,21 +66,14 @@ export function findBestMove(
           continue;
         }
 
-        let evaluation: number;
-
-        const repeat = history.includes(newPos.hash);
-        if (repeat) {
-          evaluation = 0;
-        } else {
-          evaluation = -search(
-            newPos,
-            depth - 1,
-            -beta,
-            -alpha,
-            [...history, newPos.hash],
-            true,
-          );
-        }
+        const evaluation = evaluateMove(
+          newPos,
+          depth,
+          alpha,
+          beta,
+          history,
+          false,
+        );
 
         if (evaluation > alpha) {
           alpha = evaluation;
@@ -191,42 +184,16 @@ export function search(
     if (newPos != null) {
       legalMoves.push(move);
 
-      let evaluation: number;
-
-      const repeat = history.includes(newPos.hash);
-      if (repeat) {
-        evaluation = 0;
-      } else if (!inCheck && canReduce(move, depth, legalMoves.length)) {
-        const R = 1;
-        evaluation = -search(
-          newPos,
-          depth - 1 - R,
-          -beta,
-          -alpha,
-          [...history, newPos.hash],
-          true,
-        );
-
-        if (evaluation > alpha) {
-          evaluation = -search(
-            newPos,
-            depth - 1,
-            -beta,
-            -alpha,
-            [...history, newPos.hash],
-            true,
-          );
-        }
-      } else {
-        evaluation = -search(
-          newPos,
-          depth - 1,
-          -beta,
-          -alpha,
-          [...history, newPos.hash],
-          true,
-        );
-      }
+      const canTryReduce =
+        !inCheck && canReduce(move, depth, legalMoves.length);
+      const evaluation = evaluateMove(
+        newPos,
+        depth,
+        alpha,
+        beta,
+        history,
+        canTryReduce,
+      );
 
       if (evaluation > bestValue) {
         bestValue = evaluation;
@@ -279,4 +246,39 @@ export function search(
   }
 
   return bestValue;
+}
+
+function evaluateMove(
+  newPos: Position,
+  depth: number,
+  alpha: number,
+  beta: number,
+  history: number[],
+  canTryReduce: boolean,
+): number {
+  if (history.includes(newPos.hash)) {
+    return 0;
+  }
+
+  const newHistory = [...history, newPos.hash];
+
+  if (canTryReduce) {
+    const R = 1;
+    const reducedEvaluation = -search(
+      newPos,
+      depth - 1 - R,
+      -beta,
+      -alpha,
+      newHistory,
+      true,
+    );
+
+    if (reducedEvaluation > alpha) {
+      return -search(newPos, depth - 1, -beta, -alpha, newHistory, true);
+    }
+
+    return reducedEvaluation;
+  }
+
+  return -search(newPos, depth - 1, -beta, -alpha, newHistory, true);
 }
