@@ -5,6 +5,7 @@ import type { Move, Position } from "../types";
 import { evaluate } from "./evaluation";
 import { searchState } from "./search";
 import { getMoveScore, SearchTimeoutError } from "./searchHelpers";
+import { evaluateSEE } from "./see";
 import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
 
 export function quiescence(
@@ -39,10 +40,12 @@ export function quiescence(
   let bestMove: Move | undefined = undefined;
 
   const moves = generateAllMoves(position);
-  const captureMoves = moves.filter((move) => getMoveIsCapture(move));
-  captureMoves.sort(
-    (a, b) => getMoveScore(b, position) - getMoveScore(a, position),
-  );
+  const captureMoves = moves
+    .filter((move) => getMoveIsCapture(move))
+    .map((move) => ({ move, seeValue: evaluateSEE(position, move) }))
+    .filter((entry) => entry.seeValue >= 0)
+    .sort((a, b) => b.seeValue - a.seeValue)
+    .map((entry) => entry.move);
 
   for (const move of captureMoves) {
     const newPos = makeLegalMove(position, move);
