@@ -1,6 +1,6 @@
 import { isSquareAttacked, oppositeColor } from "../position/board";
 import { generateAllMoves } from "../moves/movegen";
-import type { Move, Position } from "../types";
+import type { Color, Move, Position } from "../types";
 import {
   canNullMove,
   canReduce,
@@ -12,7 +12,7 @@ import type { SearchParameters, SearchResult, SearchState } from "./types";
 import { makeLegalMove, makeNullMove } from "../moves/makeMove";
 import { quiescence } from "./quiescence";
 import { EXACT, LOWERBOUND, probeTT, storeTT, UPPERBOUND } from "./tt";
-import { getMoveIsCapture } from "../moves/move";
+import { getMoveFrom, getMoveIsCapture, getMoveTo } from "../moves/move";
 
 export const MATE_SCORE = 1_000_000;
 export const INFINITY_SCORE = 1_000_000_000;
@@ -23,6 +23,14 @@ export const searchState: SearchState = {
 };
 
 let killerMoves: (Move | undefined)[][] = [];
+let historyHeuristic: Int32Array[][] = [];
+
+for (let color = 0; color <= 1; color++) {
+  historyHeuristic[color] = [];
+  for (let from = 0; from <= 63; from++) {
+    historyHeuristic[color]![from] = new Int32Array(64);
+  }
+}
 
 export function findBestMove(
   position: Position,
@@ -166,8 +174,18 @@ export function search(
   const moves = generateAllMoves(position);
   moves.sort(
     (a, b) =>
-      moveScoreWithKiller(b, position, killerMoves[depth]!) -
-      moveScoreWithKiller(a, position, killerMoves[depth]!),
+      moveScoreWithKiller(
+        b,
+        position,
+        killerMoves[depth]!,
+        getHistoryScore(position.sideToMove, b),
+      ) -
+      moveScoreWithKiller(
+        a,
+        position,
+        killerMoves[depth]!,
+        getHistoryScore(position.sideToMove, a),
+      ),
   ); // MVV-LVA
 
   const legalMoves: Move[] = [];
@@ -211,6 +229,11 @@ export function search(
             killerMoves[depth][1] = killerMoves[depth][0];
             killerMoves[depth][0] = move;
           }
+
+          const from = getMoveFrom(move);
+          const to = getMoveTo(move);
+          // biome-ignore lint/style/noNonNullAssertion: from/to are always 0-63, and historyHeuristic is pre-sized to [2][64] with Int32Array(64) rows
+          historyHeuristic[position.sideToMove]![from]![to]! += depth * depth;
         }
         break;
       }
@@ -246,6 +269,13 @@ export function search(
   }
 
   return bestValue;
+}
+
+function getHistoryScore(color: Color, move: Move): number {
+  const from = getMoveFrom(move);
+  const to = getMoveTo(move);
+  // biome-ignore lint/style/noNonNullAssertion: from/to are always 0-63, and historyHeuristic is pre-sized to [2][64] with Int32Array(64) rows
+  return historyHeuristic[color]![from]![to]!;
 }
 
 function evaluateMove(

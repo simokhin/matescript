@@ -19,7 +19,9 @@ function playSound(audio: HTMLAudioElement): void {
 }
 
 export function playMoveSound(move: Move, positionAfter: Position): void {
-  if (
+  if (getMoveIsCapture(move)) {
+    playSound(audioCache.capture);
+  } else if (
     isSquareAttacked(
       positionAfter,
       positionAfter.kingSquares[positionAfter.sideToMove],
@@ -27,8 +29,6 @@ export function playMoveSound(move: Move, positionAfter: Position): void {
     )
   ) {
     playSound(audioCache.check);
-  } else if (getMoveIsCapture(move)) {
-    playSound(audioCache.capture);
   } else if (getMovePromotionPiece(move) !== NOT_PROMOTION) {
     playSound(audioCache.promotion);
   } else {

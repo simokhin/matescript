@@ -17,10 +17,13 @@ export function moveScoreWithKiller(
   move: Move,
   position: Position,
   killers: (Move | undefined)[],
+  historyScore: number,
 ): number {
   let score = getMoveScore(move, position);
   if (move === killers[0] || move === killers[1]) {
     score += 50;
+  } else {
+    score += Math.min(historyScore / 100, 40);
   }
   return score;
 }
