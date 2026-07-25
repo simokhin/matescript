@@ -59,6 +59,7 @@ export function renderBoard(
         const piece: Piece = pos.board[square];
         const pieceImg = document.createElement("img");
         pieceImg.src = pieces[piece.color][piece.pieceType];
+        pieceImg.draggable = false;
         squareDiv.appendChild(pieceImg);
       }
     }

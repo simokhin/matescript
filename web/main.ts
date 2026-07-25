@@ -106,6 +106,7 @@ function onSquareClick(square: number) {
         legalMoves.forEach((m) => {
           const promotionPiece = document.createElement("img");
           promotionPiece.src = pieces[pos.sideToMove][getMovePromotionPiece(m)];
+          promotionPiece.draggable = false;
           promotionPiece.addEventListener("click", () => {
             picker.hidden = true;
             sendMove(m);

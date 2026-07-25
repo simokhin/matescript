@@ -1,7 +1,9 @@
+import { NOT_PROMOTION } from "../constants";
 import {
   getMoveCapturePiece,
   getMoveFrom,
   getMoveIsCapture,
+  getMovePromotionPiece,
 } from "../moves/move";
 import { isSquareAttacked, oppositeColor } from "../position/board";
 import type { Move, PieceType, Position } from "../types";
@@ -61,5 +63,16 @@ export function canNullMove(position: Position, depth: number): boolean {
     return false;
   }
 
+  return true;
+}
+
+export function canReduce(move: Move, depth: number, moveIndex: number) {
+  if (moveIndex <= 3 || depth <= 3) {
+    return false;
+  } else if (getMoveIsCapture(move)) {
+    return false;
+  } else if (getMovePromotionPiece(move) !== NOT_PROMOTION) {
+    return false;
+  }
   return true;
 }

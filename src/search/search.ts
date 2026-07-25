@@ -3,6 +3,7 @@ import { generateAllMoves } from "../moves/movegen";
 import type { Move, Position } from "../types";
 import {
   canNullMove,
+  canReduce,
   getMoveScore,
   moveScoreWithKiller,
   SearchTimeoutError,
@@ -178,6 +179,12 @@ export function search(
 
   const legalMoves: Move[] = [];
 
+  const inCheck = isSquareAttacked(
+    position,
+    position.kingSquares[position.sideToMove],
+    oppositeColor(position.sideToMove),
+  );
+
   for (const move of moves) {
     const newPos = makeLegalMove(position, move);
 
@@ -189,6 +196,27 @@ export function search(
       const repeat = history.includes(newPos.hash);
       if (repeat) {
         evaluation = 0;
+      } else if (!inCheck && canReduce(move, depth, legalMoves.length)) {
+        const R = 1;
+        evaluation = -search(
+          newPos,
+          depth - 1 - R,
+          -beta,
+          -alpha,
+          [...history, newPos.hash],
+          true,
+        );
+
+        if (evaluation > alpha) {
+          evaluation = -search(
+            newPos,
+            depth - 1,
+            -beta,
+            -alpha,
+            [...history, newPos.hash],
+            true,
+          );
+        }
       } else {
         evaluation = -search(
           newPos,
