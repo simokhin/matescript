@@ -38,6 +38,9 @@ export function evaluate(position: Position): number {
 
   const phase = calculatePhase(position);
 
+  let ownBishops = 0;
+  let oppBishops = 0;
+
   position.board.forEach((p, i) => {
     if (p == null) {
       return;
@@ -54,7 +57,23 @@ export function evaluate(position: Position): number {
     if (p.pieceType === PieceType.Pawn && isPassedPawn(position, i, p.color)) {
       evaluation += sign * getPassedPawnBonus(normalizedRank, phase);
     }
+
+    if (p.pieceType === PieceType.Bishop) {
+      if (sign === 1) {
+        ownBishops += 1;
+      } else {
+        oppBishops += 1;
+      }
+    }
   });
+
+  // Bishop pair bonus
+  if (ownBishops >= 2) {
+    evaluation += 40;
+  }
+  if (oppBishops >= 2) {
+    evaluation -= 40;
+  }
 
   // Penalty for doubled/isolated pawns
   const pawnsCount = countPawnsByFile(position);
