@@ -1,15 +1,17 @@
 import { makeLegalMove } from "../src/moves/makeMove";
 import {
   getMoveFrom,
+  getMoveIsCapture,
   getMovePromotionPiece,
   getMoveTo,
 } from "../src/moves/move";
 import { generateAllMoves } from "../src/moves/movegen";
 import { moveToNotation, notationToMove } from "../src/notation";
 import { parseFEN } from "../src/position/fen";
-import { Color, type Move, type Position } from "../src/types";
+import { Color, type Move, PieceType, type Position } from "../src/types";
 import {
   clearHighlights,
+  highlightSelected,
   highlightSquares,
   type LastMove,
   renderBoard,
@@ -23,6 +25,15 @@ import {
 } from "./engineInfo";
 import { renderMoves } from "./moves";
 import { playMoveSound } from "./sound";
+
+const promotionPieceNames: Record<PieceType, string> = {
+  [PieceType.Queen]: "Queen",
+  [PieceType.Rook]: "Rook",
+  [PieceType.Bishop]: "Bishop",
+  [PieceType.Knight]: "Knight",
+  [PieceType.King]: "King",
+  [PieceType.Pawn]: "Pawn",
+};
 
 let pos: Position;
 const moveList: string[] = [];
@@ -53,7 +64,14 @@ worker.onmessage = (event) => {
     );
     renderMoves(moveList);
   } else if (event.data.type === "bestmove") {
-    renderEngineInfo(event.data.depth, event.data.nodes, event.data.score);
+    // The engine reports scores from the mover's own perspective (positive =
+    // good for whoever is to move). Normalize to White's perspective, which
+    // is the convention every eval display in the UI otherwise assumes.
+    const engineColor =
+      selectedSide === Color.White ? Color.Black : Color.White;
+    const whiteRelativeScore =
+      engineColor === Color.Black ? -event.data.score : event.data.score;
+    renderEngineInfo(event.data.depth, event.data.nodes, whiteRelativeScore);
 
     // Play move's sound for engine moves
     const engineMove = notationToMove(event.data.move, pos);
@@ -75,8 +93,49 @@ worker.onmessage = (event) => {
   }
 };
 
+function isPromotionPickerOpen(): boolean {
+  const picker = document.getElementById("promotion-picker");
+  return picker != null && !picker.hidden;
+}
+
+function closePromotionPicker() {
+  const picker = document.getElementById("promotion-picker");
+  if (picker != null) {
+    picker.hidden = true;
+    picker.innerHTML = "";
+  }
+  selectedSquare = null;
+  clearHighlights(squareDivs);
+}
+
+// The click that opens the picker also bubbles up to this document listener;
+// suppress that one so the picker doesn't close itself the instant it opens.
+let suppressNextOutsideClick = false;
+
+document.addEventListener("click", (event) => {
+  if (suppressNextOutsideClick) {
+    suppressNextOutsideClick = false;
+    return;
+  }
+
+  const picker = document.getElementById("promotion-picker");
+  if (
+    picker != null &&
+    !picker.hidden &&
+    !picker.contains(event.target as Node)
+  ) {
+    closePromotionPicker();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && isPromotionPickerOpen()) {
+    closePromotionPicker();
+  }
+});
+
 function onSquareClick(square: number) {
-  if (!gameStarted) {
+  if (!gameStarted || isPromotionPickerOpen()) {
     return;
   }
 
@@ -102,18 +161,34 @@ function onSquareClick(square: number) {
       if (picker != null) {
         picker.innerHTML = "";
         picker.hidden = false;
+        suppressNextOutsideClick = true;
         // Show promotion moves
         legalMoves.forEach((m) => {
-          const promotionPiece = document.createElement("img");
-          promotionPiece.src = pieces[pos.sideToMove][getMovePromotionPiece(m)];
-          promotionPiece.draggable = false;
-          promotionPiece.addEventListener("click", () => {
+          const promotionPiece = getMovePromotionPiece(m);
+
+          const option = document.createElement("button");
+          option.type = "button";
+          option.className = "promotion-picker__option";
+          option.setAttribute(
+            "aria-label",
+            `Promote to ${promotionPieceNames[promotionPiece]}`,
+          );
+
+          const pieceImg = document.createElement("img");
+          pieceImg.src = pieces[pos.sideToMove][promotionPiece];
+          pieceImg.draggable = false;
+          pieceImg.alt = "";
+          option.appendChild(pieceImg);
+
+          option.addEventListener("click", () => {
             picker.hidden = true;
             sendMove(m);
             moveList.push(moveToNotation(m));
           });
-          picker.appendChild(promotionPiece);
+          picker.appendChild(option);
         });
+
+        (picker.firstElementChild as HTMLButtonElement | null)?.focus();
       }
     } else if (legalMoves.length === 0) {
       selectSquare(square);
@@ -139,6 +214,7 @@ function sendMove(move: Move) {
 // Select and highlight legal moves on the board
 function selectSquare(square: number) {
   selectedSquare = square;
+  highlightSelected(squareDivs, square);
 
   const moves = generateAllMoves(pos);
   const fromSquareMoves = moves.filter((m) => getMoveFrom(m) === square);
@@ -147,10 +223,13 @@ function selectSquare(square: number) {
     (m) => makeLegalMove(pos, m) != null,
   );
 
-  highlightSquares(
-    squareDivs,
-    legalMoves.map((m) => getMoveTo(m)),
-  );
+  const quietSquares: number[] = [];
+  const captureSquares: number[] = [];
+  for (const m of legalMoves) {
+    (getMoveIsCapture(m) ? captureSquares : quietSquares).push(getMoveTo(m));
+  }
+
+  highlightSquares(squareDivs, quietSquares, captureSquares);
 }
 
 // Settings panel
