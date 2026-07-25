@@ -59,7 +59,8 @@ web/            browser UI (Vite + vanilla TypeScript, no framework)
 - Negamax search with alpha-beta pruning and iterative deepening
 - Transposition table
 - Quiescence search
-- Move ordering: MVV-LVA, killer moves
+- Move ordering: MVV-LVA, killer moves, history heuristic
 - Null-move pruning
-- Evaluation: material, tapered piece-square tables, pawn structure (doubled/isolated/passed pawns), king safety (pawn shield)
+- Late move reductions (LMR)
+- Evaluation: material, tapered piece-square tables, pawn structure (doubled/isolated/passed pawns), king safety (pawn shield), rook on open/semi-open files, bishop pair
 - Threefold-repetition avoidance during search
