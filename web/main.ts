@@ -6,6 +6,7 @@ import {
 } from "../src/moves/move";
 import { generateAllMoves } from "../src/moves/movegen";
 import { moveToNotation, notationToMove } from "../src/notation";
+import { parseFEN } from "../src/position/fen";
 import { Color, type Move, type Position } from "../src/types";
 import {
   clearHighlights,
@@ -175,6 +176,23 @@ startGameButton?.addEventListener("click", () => {
   const movetimeInput = document.getElementById("movetime-input");
 
   const fen = fenInput instanceof HTMLInputElement ? fenInput.value.trim() : "";
+  const fenError = document.getElementById("fen-error");
+
+  if (fen !== "") {
+    try {
+      parseFEN(fen);
+    } catch {
+      if (fenError != null) {
+        fenError.hidden = false;
+      }
+      return;
+    }
+  }
+
+  if (fenError != null) {
+    fenError.hidden = true;
+  }
+
   const parsedMovetime =
     movetimeInput instanceof HTMLInputElement
       ? Number(movetimeInput.value)
@@ -200,6 +218,7 @@ startGameButton?.addEventListener("click", () => {
   }
 
   showSettingsSummary();
+  setBoardOverlayVisible(false);
 });
 
 const newGameButton = document.getElementById("new-game-button");
@@ -214,7 +233,15 @@ newGameButton?.addEventListener("click", () => {
   worker.postMessage({ type: "getBoard" });
 
   showSettingsForm();
+  setBoardOverlayVisible(true);
 });
+
+function setBoardOverlayVisible(visible: boolean) {
+  const boardOverlay = document.getElementById("board-overlay");
+  if (boardOverlay != null) {
+    boardOverlay.hidden = !visible;
+  }
+}
 
 function showSettingsSummary() {
   const settingsForm = document.getElementById("settings-form");

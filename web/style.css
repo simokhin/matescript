@@ -7,6 +7,7 @@
     --color-accent: #d9782d;
     --color-highlight: #5b7a8c;
     --color-picker-bg: #4a5058;
+    --color-error: #d9534f;
     --font-ui: ui-sans-serif, system-ui, -apple-system, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", monospace;
 }
@@ -46,10 +47,33 @@ body {
     gap: 1rem;
 }
 
+.board-wrapper {
+    position: relative;
+}
+
 .board {
     display: grid;
     grid-template-columns: repeat(8, 84px);
     grid-template-rows: repeat(8, 84px);
+}
+
+.board-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: color-mix(in srgb, var(--color-bg) 75%, transparent);
+    color: var(--color-text);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.board-overlay[hidden] {
+    display: none;
 }
 
 .square {
@@ -70,6 +94,33 @@ body {
 
 .square--dark {
     background-color: var(--color-square-dark);
+}
+
+.coord {
+    position: absolute;
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.coord--rank {
+    top: 3px;
+    left: 3px;
+}
+
+.coord--file {
+    right: 3px;
+    bottom: 3px;
+}
+
+.square--light .coord {
+    color: var(--color-square-dark);
+}
+
+.square--dark .coord {
+    color: var(--color-square-light);
 }
 
 .square--highlight::after {
@@ -236,6 +287,17 @@ body {
 .field__input:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 1px;
+}
+
+.field__error {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-error);
+}
+
+.field__error[hidden] {
+    display: none;
 }
 
 .side-toggle {

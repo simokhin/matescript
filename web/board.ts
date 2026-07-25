@@ -39,6 +39,20 @@ export function renderBoard(
         squareDiv.classList.add("square--lastmove");
       }
 
+      if (visualCol === 0) {
+        const rankLabel = document.createElement("span");
+        rankLabel.className = "coord coord--rank";
+        rankLabel.textContent = String(r + 1);
+        squareDiv.appendChild(rankLabel);
+      }
+
+      if (visualRow === 7) {
+        const fileLabel = document.createElement("span");
+        fileLabel.className = "coord coord--file";
+        fileLabel.textContent = String.fromCharCode(97 + c);
+        squareDiv.appendChild(fileLabel);
+      }
+
       boardDiv?.appendChild(squareDiv);
 
       if (pos.board[square] != null) {

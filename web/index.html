@@ -65,6 +65,9 @@
                             type="text"
                             placeholder="Leave empty for standard start"
                         />
+                        <span id="fen-error" class="field__error" hidden
+                            >Invalid FEN string</span
+                        >
                     </div>
 
                     <button
@@ -88,7 +91,12 @@
                 </div>
             </aside>
             <main class="stage">
-                <div id="board" class="board"></div>
+                <div class="board-wrapper">
+                    <div id="board" class="board"></div>
+                    <div id="board-overlay" class="board-overlay">
+                        ← Start a game to play
+                    </div>
+                </div>
                 <div
                     id="promotion-picker"
                     class="promotion-picker"
